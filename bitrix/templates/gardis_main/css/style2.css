@@ -1,0 +1,35 @@
+.page_about{
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+#description_start p{
+    color: #676767;
+    margin: 0;
+    padding: 0;
+}
+section{
+    margin-top: 40px;
+}
+section h2{
+    font-weight: 900;
+}
+.warning_block{
+    border-left: 8px solid #ffcc00;
+    padding-left: 10px;
+    min-height: 100px;
+    font-size: 30px;
+    color: #4444ff;
+    padding: 30px 0px 30px 35px;
+    font-weight: 100;
+}
+#specialization .spec_item{
+    color: #4444ff;
+}
+.ch{
+    margin: 0;
+    padding: 0;
+}
+.year_block{
+    background-color: #b9b9b9;
+    margin: 10px;
+}

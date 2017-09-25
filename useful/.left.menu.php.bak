@@ -1,0 +1,18 @@
+<?
+$aMenuLinks = Array(
+	Array(
+		"Статьи", 
+		"/useful/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+/*	Array(
+		"Вопрос-ответ", 
+		"/useful/", 
+		Array(), 
+		Array(), 
+		"" 
+	)*/
+);
+?>

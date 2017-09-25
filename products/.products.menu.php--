@@ -1,0 +1,53 @@
+<?
+$aMenuLinks = Array(
+	Array(
+		"Вся продукция", 
+		"/products/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Для промышленных объектов", 
+		"/products/dlya-promyshlennykh-obektov/", 
+		Array(), 
+		Array("FROM_IBLOCK"=>"1", "IS_PARENT"=>"", "DEPTH_LEVEL"=>"1"), 
+		"" 
+	),
+	Array(
+		"Для коттеджных посёлков", 
+		"/products/dlya-kottedzhnykh-posyelkov/", 
+		Array(), 
+		Array("FROM_IBLOCK"=>"1", "IS_PARENT"=>"", "DEPTH_LEVEL"=>"1"), 
+		"" 
+	),
+	Array(
+		"Для спортивных объектов", 
+		"/products/dlya-sportivnykh-obektov/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Для городской инфраструктуры", 
+		"/products/dlya-gorodskoy-infrastruktury/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Для отдыха", 
+		"/products/dlya-mest-otdykha/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Для транспорта", 
+		"/products/dlya-transporta/", 
+		Array(), 
+		Array(), 
+		"" 
+	)
+);
+?>

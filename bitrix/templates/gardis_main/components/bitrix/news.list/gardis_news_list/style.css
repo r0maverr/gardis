@@ -1,0 +1,10 @@
+﻿@media (max-width:767px) {
+    .news-item-content{
+        text-align:center;
+    }
+    .preview-picture2 {
+        display:flex;
+        justify-content:center;
+    }
+
+}

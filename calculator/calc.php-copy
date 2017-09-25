@@ -1,0 +1,2172 @@
+<?
+require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+header('Content-type: text/html; charset=cp1251');
+?>
+
+<?
+// Загрузка модулей Битрикса
+if (!Bitrix\Main\Loader::includeModule('iblock') or !Bitrix\Main\Loader::includeModule('catalog'))
+{
+    die ('Ошибка в загрузки модулей...');
+}
+
+//p($_POST,'_POST');
+
+$arPost = array();
+foreach($_POST as $key => $value){
+    if(is_array($value)){
+        foreach($value as $val){ 
+            $arPost[$key][] = iconv('utf-8', 'cp1251', $val);
+        }
+    }
+    else
+        $arPost[$key] = iconv('utf-8', 'cp1251', $_POST[$key]);
+}
+
+p($arPost,'arPost');
+// p(serialize($arPost),'serialize');
+
+//p(mb_convert_encoding($arPost['type_install_stolba'],'cp1251'), 'type_install_stolba');
+
+$arType = array( //Тип панели:  fit, light, optima, medium2d, Estetic, power, industrial
+        'F' => 'Fit',
+        'L' => 'Light',
+        'О' => 'Optima',
+        'P' => 'Power',
+        'I' => 'Industrial',
+        'М' => 'Medium 2D',
+        'Е' => 'Estetic',
+        //'H' => 'H',
+        
+    );
+$kolKrepegForHeightOgr = array( // К – соответствие кол-ва крепежей высоте ограждения, см. сл. 24-26
+    '430' => 2,
+    '630' => 2,
+    '640' => 2,
+    '830' => 2,
+    '840' => 2,
+    '1030' => 2,
+    '1130' => 2,
+    '1230' => 2,
+    '1240' => 2,
+    '1330' => 2,
+    '1430' => 3,
+    '1440' => 3,
+    '1530' => 3,
+    '1630' => 3,
+    '1730' => 3,
+    '1830' => 4,
+    '1930' => 4,
+    '2030' => 4,
+    '2130' => 4,
+    '2230' => 4,
+    '2300' => 4,
+    '2330' => 4,
+    '2430' => 4,
+    '2530' => 4,
+    '2630' => 4,
+    '2730' => 4,
+    '2830' => 4,
+    '2930' => 5,
+    '3300' => 5,
+    '3100' => 6, // 3+3
+    '4100' => 8, // 4+4
+);
+
+$kolKrepegOtSecheniyaStolba = array(
+    '60*40' => 8,
+    '60*60' => 8,
+    '80*80' => 4,
+);
+
+$kolKrepegNaVorota = array( // количество хомутов концевых  мм от высоты ворот
+    '1600' => 6,
+    '1800' => 6,
+    '2000' => 8, // для фит
+    '2100' => 8,
+    '2500' => 8,
+);
+
+$kolKrepegNaKalitku = array( // количество хомутов концевых  мм высоты калитки
+    '1600' => 6,
+    '1800' => 6,
+    '2000' => 8,  // для фит
+    '2100' => 8,
+    '2500' => 8,
+);
+
+$arSechenieStolbaPodVorota = array( // высота-ширина => сечение
+
+    'vorota_standart' => array( 
+        '1600-3000' => '80*80',
+        '1600-4000' => '80*80',
+        '1600-5000' => '80*80',
+        '1600-6000' => '80*80',
+        '1800-3000' => '80*80',
+        '1800-4000' => '80*80',
+        '1800-5000' => '80*80',
+        '1800-6000' => '100*100', // планка прижимная
+        '2100-3000' => '80*80',
+        '2100-4000' => '80*80',
+        '2100-5000' => '80*80',
+        '2100-6000' => '100*100',  // планка прижимная  
+        '2500-3000' => '80*80',
+        '2500-4000' => '80*80',
+        '2500-5000' => '100*100', // планка прижимная
+        '2500-6000' => '100*100', // планка прижимная
+    ),
+    
+    'vorota_fit' => array(  // в тетради ширина 3600, в базе 3500. делаем по базе
+        '1600-3500' => '80*80',
+        '1800-3500' => '80*80',
+        '2000-3500' => '80*80',
+    ),
+    
+);
+
+$arSechenieStolbaPodKalitku = array( // высота-ширина => сечение
+    '1600-1000' => '60*60',
+    '1800-1000' => '60*60',
+    '2100-1000' => '60*60',
+    '2000-1000' => '60*60', //фит
+    '2500-1000' => '80*80',
+);
+
+// делитель для рассчёта количества панелей при креплении хомут - Межосевое расстояние,
+$arKoefOtDliniISecheniya = array(
+    '2400' => array(
+        '60*40' => 2.48,
+        '60*60' => 2.50,
+        '80*80' => 2.52,
+    ),
+    '2500' => array(
+        '60*40' => 2.58,
+        '60*60' => 2.60,
+        '80*80' => 2.62,
+    ),
+    '3000' => array(
+        '60*40' => 3.08,
+        '60*60' => 3.10,
+        '80*80' => 3.12,
+    ),
+);
+?>
+
+<?
+//СОТВЕТСТВИЕ типа панели и ширины и ВЫСОТ ОГРАЖДЕНИЯ И СЕЧЕНИЯ СТОЛБОВ
+$arSechenieHeight = array( 
+    'F' => array(
+        '2500' =>array(
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+        ),
+        
+        '3000' =>array(
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.2',
+                    ),
+        ),
+                
+    ),
+    
+    'О' => array(
+        '2500' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2630' => array(
+                        'HEIGHT_STOLBA' => 3500,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+        ), 
+        
+        '3000' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2630' => array(
+                        'HEIGHT_STOLBA' => 3500,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+        ),         
+    ),   
+    
+    'L' => array(
+        '2500' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+        ), 
+        
+        '3000' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+        ),         
+    ), 
+
+    'М' => array(
+        '2500' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1630' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1830' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '3100' => array( // 2030+1030
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '80*80*2',
+                    ),
+        ),     
+    ),  
+    
+    'Е' => array(
+        '2500' =>array(
+            '640' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1040' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1240' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1440' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+        ),     
+    ),  
+
+    'P' => array( // взято от O
+        '2500' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2630' => array(
+                        'HEIGHT_STOLBA' => 3500,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+        ), 
+        
+        '3000' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2630' => array(
+                        'HEIGHT_STOLBA' => 3500,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+        ),         
+    ),    
+    
+    'I' => array( // взято от O
+        '2500' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2630' => array(
+                        'HEIGHT_STOLBA' => 3500,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+        ), 
+        
+        '3000' =>array(
+            '630' => array(
+                        'HEIGHT_STOLBA' => 1150,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1030' => array(
+                        'HEIGHT_STOLBA' => 1500,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1230' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1430' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1530' => array(
+                        'HEIGHT_STOLBA' => 2000,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1730' => array(
+                        'HEIGHT_STOLBA' => 2300,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '1930' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2030' => array(
+                        'HEIGHT_STOLBA' => 2600,
+                        'SECHENIE_STOLBA' => '60*40*1.5',
+                    ),
+            '2230' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2430' => array(
+                        'HEIGHT_STOLBA' => 3000,
+                        'SECHENIE_STOLBA' => '60*60*1.5',
+                    ),
+            '2630' => array(
+                        'HEIGHT_STOLBA' => 3500,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2830' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '2930' => array(
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '3100' => array( // 1530+1530
+                        'HEIGHT_STOLBA' => 4000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+            '4100' => array( // 2030+2030
+                        'HEIGHT_STOLBA' => 5000,
+                        'SECHENIE_STOLBA' => '60*60*2',
+                    ),
+        ),         
+    ),       
+);
+?>
+<?
+// сечение столба панели
+preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'], $match);
+$sechenieStolbaPaneli = $match[1];
+/*?>
+<div>
+    Cечение столба панели: <?=$sechenieStolbaPaneli?>
+</div>
+<?*/
+$height_paneli = $arPost['height_paneli1'];
+
+if((int)$arPost['perimetr'] > 0)
+    $perimetr = (int)$arPost['perimetr'];
+else
+    $perimetr = (int)$arPost['summstoron'];
+
+$realWidth = $arPost['width'];
+if($arPost['width'] == 2400 ){  
+    $arPost['width'] = 2500;
+}
+
+// if($arPost['width'] == 2500 && ($height_paneli == 2830 || $height_paneli == 2930) )    // для этих высот (ширина панели 2400) - сейчас это правило автоматом работает на основе данных из базы
+    // $dlinaPaneli = 2400 / 1000;
+// else
+    $dlinaPaneli = $realWidth / 1000;
+
+if($arPost['color'] == 'цинк'){
+    $pokritie = 'цинк';
+    $colorValue = $arPost['color'];
+}
+else{
+    $pokritie = 'цинк+полимер';
+    if($arPost['color'] == 'other_color'){
+        $colorValue = $arPost['color_your'];
+    }
+    else{
+        $colorValue = $arPost['color'];
+    }
+}
+
+
+/*?>
+<div>Длина панели: <?=$dlinaPaneli*1000?></div>
+<?*/
+$arParams = array();
+
+$sechenieStolbaPodKalitku = $arSechenieStolbaPodKalitku[($arPost['height_kalitka']*10).'-'.($arPost['width_kalitka']*10)];  // Сечение столба под калитку: 
+$sechenieStolbaPodVorota = $arSechenieStolbaPodVorota[$arPost['type_vorot']][($arPost['height_vorot']*10).'-'.($arPost['width_vorot']*10)];// Сечение столба под ворота: 
+p($sechenieStolbaPodVorota,'sechenieStolbaPodVorota');    
+if($arPost['type_perimetr'] == 'nezamknut') // незамкнутый периметр
+{
+    $widthKalitka = $widthVorot = 0;
+    if($arPost['kalitka'] == 'on'){
+        $widthKalitka = $arPost['kol_kalitka'] * $arPost['width_kalitka'] / 100 ; // в метрах
+    }
+    if($arPost['vorota'] == 'on' || $arPost['vorota1'] == 'on'){
+        $widthVorot = $arPost['kol_vorot'] * $arPost['width_vorot'] / 100 ; // в метрах
+    }
+// p($widthKalitka,'widthKalitka');
+// p($widthVorot,'widthVorot');
+    if($arPost['kreplenie'] == 'homut') // хомут
+    {
+        for($i=1; $i<=$arPost['cntStoron']; $i++)
+        {
+
+            $perimetr = $arPost['storona'.$i];
+            //$sechenieStolbaPaneli = $arPost['sechenie_stolba'.$i];
+            // сечение столба панели
+            preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'.$i], $match);
+            $sechenieStolbaPaneli = $match[1];
+            
+            $height_paneli = $arPost['height_paneli'.$i];
+            $coefficientForKozirek = $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli];
+            
+            
+            $countPanels = ceil( ($perimetr - $widthKalitka - $widthVorot) / $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli] ); // Количество панелей 
+            $countStolbPaneli = $countPanels - $arPost['kol_kalitka'] - $arPost['kol_vorot'] + 1; // Количество столбов=количество панелей+1=
+            $countKrepegKKP = ($countStolbPaneli - 2) * $kolKrepegForHeightOgr[$height_paneli]; // Количество крепежей прямых (ККП)= (количество столбов-2) х К=(55-2)х3=159
+            $countKrepegKKPNabor = ceil($countKrepegKKP / 12); //количество крепежей прямых в наборе;
+            $countKrepegKKK = 2 * $kolKrepegForHeightOgr[$height_paneli]; // Количество крепежей концевых (ККК)= количество крайних столбов х К=2х3=6
+            
+            // *8 – количество крепежей в наборе для столбов 60х40,60х60; 
+            //*4 – количество крепежей в наборе для столбов 80х80. 6/8=0.75>1 набор
+            //preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'], $match);
+            $countKrepegKKKNabor = ceil($countKrepegKKK / $kolKrepegOtSecheniyaStolba[$sechenieStolbaPaneli]);
+        
+            $arParams['PANELI'][] = array( // массив панелей
+                'height_paneli' => $height_paneli,
+                'sechenieStolbaPaneli' => $sechenieStolbaPaneli,
+                'postSechenieStolbaPaneli' => $arPost['sechenie_stolba'.$i],
+                'countStolbPaneli' => $countStolbPaneli,
+                'countPanels' => $countPanels,
+                'countKrepegKKP' => $countKrepegKKP,
+                'countKrepegKKPNabor' => $countKrepegKKPNabor,
+                'countKrepegKKK' => $countKrepegKKK,
+                'countKrepegKKKNabor' => $countKrepegKKKNabor,
+            );
+        }
+        /*?>
+        <div>Количество панелей: <?=$countPanels?></div>
+        <div>Количество столбов для панелей: <?=$countStolbPaneli?></div>
+        <div>Количество крепежей прямых: <?=$countKrepegKKP?></div>
+        <div>Количество наборов крепежей прямых: <?=$countKrepegKKPNabor?></div>
+        <div>Количество крепежей концевых: <?=$countKrepegKKK?></div>
+        <div>Количество наборов крепежей концевых : <?=$countKrepegKKKNabor?></div>
+        <?*/
+ 
+    }
+    elseif($arPost['kreplenie'] == 'planka_prigim' || $arPost['kreplenie'] == 'planka_samores') // планка
+    {
+        for($i=1; $i<=$arPost['cntStoron']; $i++)
+        {
+
+            $perimetr = $arPost['storona'.$i];
+            //$sechenieStolbaPaneli = $arPost['sechenie_stolba'.$i];
+            // сечение столба панели
+            preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'.$i], $match);
+            $sechenieStolbaPaneli = $match[1];
+            $height_paneli = $arPost['height_paneli'.$i];
+            $coefficientForKozirek = $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli];
+            
+            $countPanels = ceil( ($perimetr - $widthKalitka - $widthVorot) / $dlinaPaneli); // Количество панелей 
+            $countStolbPaneli = $countPanels - $arPost['kol_kalitka'] - $arPost['kol_vorot'] + 1; // Количество столбов=количество панелей+1=
+            $countKrepegKKP = $countStolbPaneli * $kolKrepegForHeightOgr[$height_paneli]; // Количество крепежей прямых (ККП)= (количество столбов-2) х К=(55-2)х3=159
+            $countKrepegKKPNabor = ceil($countKrepegKKP / 12); //количество крепежей прямых в наборе;
+        
+            $arParams['PANELI'][] = array( // массив панелей
+                'height_paneli' => $height_paneli,
+                'sechenieStolbaPaneli' => $sechenieStolbaPaneli,
+                'postSechenieStolbaPaneli' => $arPost['sechenie_stolba'.$i],
+                'countStolbPaneli' => $countStolbPaneli,
+                'countPanels' => $countPanels,
+                'countKrepegKKP' => $countKrepegKKP,
+                'countKrepegKKPNabor' => $countKrepegKKPNabor,
+            );
+        }
+
+        /*?>
+        <div>Количество панелей: <?=$countPanels?></div>
+        <div>Количество столбов для панелей: <?=$countStolbPaneli?></div>
+        <div>Количество крепежей: <?=$countKrepegKKP?></div>
+        <?*/
+    }
+}
+elseif($arPost['type_perimetr'] == 'zamknut') // замкнутый периметр
+{
+
+    $widthKalitka = $widthVorot = 0;
+    if($arPost['kalitka'] == 'on'){
+        $widthKalitka = $arPost['kol_kalitka'] * $arPost['width_kalitka'] / 100 ; // в метрах
+    }
+    else
+        $arPost['kol_kalitka']=0;
+    if($arPost['vorota'] == 'on' || $arPost['vorota1'] == 'on'){
+        $widthVorot = $arPost['kol_vorot'] * $arPost['width_vorot'] / 100 ; // в метрах
+    }
+    else
+        $arPost['kol_vorot']=0;
+
+// p($widthKalitka,'widthKalitka');
+// p($widthVorot,'widthVorot');
+    if($arPost['kreplenie'] == 'homut') // хомут
+    {
+        for($i=1; $i<=$arPost['cntStoron']; $i++)
+        {
+
+            $perimetr = $arPost['storona'.$i];
+            //$sechenieStolbaPaneli = $arPost['sechenie_stolba'.$i];
+            // сечение столба панели
+            preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'.$i], $match);
+            $sechenieStolbaPaneli = $match[1];
+            
+            $height_paneli = $arPost['height_paneli'.$i];
+            $coefficientForKozirek = $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli];
+            
+p($arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli], 'Делитель');
+
+            if($height_paneli == 4100 || $height_paneli == 3100){
+                $countPanels = ceil( $perimetr / $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli] ); // Количество панелей 
+                $countStolbPaneli = $countPanels; // Количество столбов=количество панелей-количество входных групп          
+                if( $arPost['type_ob'] == 'sport' || $arPost['type_ob'] == 'sport-other'){ //исключение
+                    if($height_paneli == 4100)
+                        $coefficient = 12;
+                    else
+                        $coefficient = 9;
+                }
+                else
+                    $coefficient = $kolKrepegForHeightOgr[$height_paneli];
+                
+                $countKrepegKKP = $countStolbPaneli * $coefficient; // Количество крепежей прямых=количество столбов х К=78х4=312
+                $countKrepegKKPNabor = ceil($countKrepegKKP / 12); //количество крепежей прямых в наборе;
+
+            }
+            else{
+                $countPanels = ceil( ($perimetr - $widthKalitka - $widthVorot) / $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli] ); // Количество панелей 
+                $countStolbPaneli = $countPanels - $arPost['kol_kalitka'] - $arPost['kol_vorot']; // Количество столбов=количество панелей-количество входных групп
+                $countKrepegKKP = $countStolbPaneli * $kolKrepegForHeightOgr[$height_paneli]; // Количество крепежей прямых=количество столбов х К=78х4=312
+                $countKrepegKKPNabor = ceil($countKrepegKKP / 12); //количество крепежей прямых в наборе;
+            }
+            
+p($coefficient, 'Коеффициент');
+p($countKrepegKKP, 'Количество крепежей прямых');
+p($countPanels, 'Количество панелей');
+p($height_paneli, 'высота панели');
+            
+
+//p($countKrepegKKPNabor, 'количество крепежей прямых в наборе');
+            /////
+            $countKrepegKKK = $kolKrepegNaVorota[$arPost['height_vorot']*10] * (int)$arPost['kol_vorot'] + $kolKrepegNaKalitku[$arPost['height_kalitka']*10] * (int)$arPost['kol_kalitka']; // Количество крепежей концевых (ККК)=Кв х количество ворот+Кв х количество калиток =8х1+8х1=16
+           // $countKrepegKKK = 0; // для ворот и калитов считаем отдельно количество
+p($countKrepegKKK, 'Количество крепежей концевых');
+p((int)$arPost['kol_vorot'], 'kol_vorot');
+p((int)$arPost['kol_kalitka'], 'kol_kalitka');
+            // *8 – количество крепежей в наборе для столбов 60х40,60х60; 
+            //*4 – количество крепежей в наборе для столбов 80х80. 6/8=0.75>1 набор
+            //preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'], $match);
+            $countKrepegKKKNabor = ceil($countKrepegKKK / $kolKrepegOtSecheniyaStolba[$sechenieStolbaPaneli]);
+           
+           //Кв – соответствие кол-ва крепежей высоте входных групп, см. сл. 24-26
+            // *8 – количество крепежей в наборе для столбов 60х40,60х60; 
+            //*4 – количество крепежей в наборе для столбов 80х80. 6/8=0.75>1 набор
+            //preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'], $match);
+            // $kolKrepegNaVorota = array( // количество хомутов концевых  мм от высоты ворот
+            // $kolKrepegNaKalitku = array( // количество хомутов концевых  мм высоты калитки
+            
+            $arParams['PANELI'][] = array( // массив панелей
+                'height_paneli' => $height_paneli,
+                'sechenieStolbaPaneli' => $sechenieStolbaPaneli,
+                'postSechenieStolbaPaneli' => $arPost['sechenie_stolba'.$i],
+                'countStolbPaneli' => $countStolbPaneli,
+                'countPanels' => $countPanels,
+                'countKrepegKKP' => $countKrepegKKP,
+                'countKrepegKKPNabor' => $countKrepegKKPNabor,
+                'countKrepegKKK' => $countKrepegKKK,
+                'countKrepegKKKNabor' => $countKrepegKKKNabor,
+            );
+        } 
+        
+        $countKrepegKKKNaborKalitka = ceil($countKrepegKKK / $kolKrepegOtSecheniyaStolba[$sechenieStolbaPodKalitku]);
+        $countKrepegKKKNaborVorota = ceil($countKrepegKKK / $kolKrepegOtSecheniyaStolba[$sechenieStolbaPodVorota]);
+        
+        /*?>
+        <div>Количество панелей: <?=$countPanels?></div>
+        <div>Количество столбов для панелей: <?=$countStolbPaneli?></div>
+        <div>Количество крепежей прямых: <?=$countKrepegKKP?></div>
+        <div>Количество наборов крепежей прямых: <?=$countKrepegKKPNabor?></div>
+        <div>Количество крепежей концевых: <?=$countKrepegKKK?></div>
+        <div>Количество наборов крепежей концевых для калитки: <?=$countKrepegKKKNaborKalitka?></div>
+        <div>Количество наборов крепежей концевых для ворот: <?=$countKrepegKKKNaborVorota?></div>
+        <?*/
+ 
+    }
+    elseif($arPost['kreplenie'] == 'planka_prigim' || $arPost['kreplenie'] == 'planka_samores') // планка
+    {
+        for($i=1; $i<=$arPost['cntStoron']; $i++)
+        {
+
+            $perimetr = $arPost['storona'.$i];
+            //$sechenieStolbaPaneli = $arPost['sechenie_stolba'.$i];
+            // сечение столба панели
+            preg_match('/([\d]+\*[\d]+)/', $arPost['sechenie_stolba'.$i], $match);
+            $sechenieStolbaPaneli = $match[1];
+            
+            $height_paneli = $arPost['height_paneli'.$i];
+            $coefficientForKozirek = $arKoefOtDliniISecheniya[$realWidth][$sechenieStolbaPaneli];
+            
+            $countPanels = ceil( ($perimetr - $widthKalitka - $widthVorot) / $dlinaPaneli); // Количество панелей 
+            $countStolbPaneli = $countPanels - $arPost['kol_kalitka'] - $arPost['kol_vorot'] + 1; // Количество столбов=количество панелей+1=
+            $countKrepegKKP = $countStolbPaneli * $kolKrepegForHeightOgr[$height_paneli]; // Количество крепежей прямых (ККП)= (количество столбов-2) х К=(55-2)х3=159
+            $countKrepegKKPNabor = ceil($countKrepegKKP / 12); //количество крепежей прямых в наборе;
+            
+            $arParams['PANELI'][] = array( // массив панелей
+                'height_paneli' => $height_paneli,
+                'sechenieStolbaPaneli' => $sechenieStolbaPaneli,
+                'postSechenieStolbaPaneli' => $arPost['sechenie_stolba'.$i],
+                'countStolbPaneli' => $countStolbPaneli,
+                'countPanels' => $countPanels,
+                'countKrepegKKP' => $countKrepegKKP,
+                'countKrepegKKPNabor' => $countKrepegKKPNabor,
+            );
+        }
+
+        /*?>
+        <div>Количество панелей: <?=$countPanels?> </div>
+        <div>Количество столбов для панелей: <?=$countStolbPaneli?></div>
+        <div>Количество крепежей прямых: <?=$countKrepegKKP?></div>
+        <?*/
+    }
+    /*?>
+    
+    <div>Сечение столба под калитку: <?=$sechenieStolbaPodKalitku?></div>
+    <div>Сечение столба под ворота: <?=$sechenieStolbaPodVorota?></div>
+   <? */
+
+}
+
+//if (isset($arPost['WEB_FORM_ID']) && intval($arPost['WEB_FORM_ID']) > 0) {
+p('поменять время кеширования');   
+    
+$arParamsTranslit = array("replace_space"=>"_","replace_other"=>"_");
+//$el = new CIBlockElement;
+$idIBlock = CATALOG_1C_IBLOCK_ID;
+$arFilter = array(
+    'IBLOCK_ID' => $idIBlock,  
+    'ACTIVE' => 'Y',  
+    //'SECTION_CODE' => 'paneli_ograzhdeniya',   
+    'INCLUDE_SUBSECTIONS' => 'Y',   
+);
+
+$arVid = $arPokritie = $arWidth = $arHeight = $arYacheika = $arDiametr = $arVidDiametr = array();
+
+$obCache = new \CPHPCache();
+$cacheLifeTime = 1;//86400*60;
+$cacheID = 'iblock_id_'.serialize($arPost);
+$cacheDir = 's1/calculator';
+
+if($obCache->InitCache($cacheLifeTime, $cacheID, $cacheDir) ) 
+{
+    $returnRes = $obCache->GetVars();		
+}
+elseif($obCache->StartDataCache())
+{
+    if (defined('BX_COMP_MANAGED_CACHE')) {
+
+        $tagCache = new Bitrix\Main\Data\TaggedCache();
+        $tagCache->startTagCache($cacheDir);
+        $tagCache->registerTag(sprintf('iblock_id_%s', $idIBlock));
+        $tagCache->endTagCache();
+    }
+    
+    $countKKK_KPP = 0; // количество креплений
+    // получим панели
+    $koefColPaneli = 1; // если двойные панели // 2030+2030 то = 2
+
+//p($arParams['PANELI'],'PANELI');
+/*$arParams['PANELI'][] = array( // массив панелей
+    'height_paneli' => $height_paneli,
+    'sechenieStolbaPaneli' => $sechenieStolbaPaneli,
+    'countStolbPaneli' => $countStolbPaneli,
+    'countPanels' => $countPanels,
+    'countKrepegKKP' => $countKrepegKKP,
+    'countKrepegKKPNabor' => $countKrepegKKPNabor,
+    'countKrepegKKK' => $countKrepegKKK,
+);*/
+    foreach($arParams['PANELI'] as $arPanel)
+    {
+       
+        $height_paneli = $arPanel['height_paneli'];
+        $countPanels = $arPanel['countPanels'];
+        $countStolbPaneli = $arPanel['countStolbPaneli'];
+        $sechenieStolbaPaneli = $arPanel['sechenieStolbaPaneli'];
+        $postSechenieStolbaPaneli = $arPanel['postSechenieStolbaPaneli'];
+        $countKrepegKKP = $arPanel['countKrepegKKP'];
+        $countKrepegKKPNabor = $arPanel['countKrepegKKPNabor'];
+        $countKrepegKKK = $arPanel['countKrepegKKK'];
+        $countKrepegKKKNabor = $arPanel['countKrepegKKKNabor'];
+        
+        //$countKKK_KPP += ($countKrepegKKK + $countKrepegKKP);
+        
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock,  
+            'ACTIVE' => 'Y',  
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            'PROPERTY_TYPE' => $arPost['type_panel'],  
+            'PROPERTY_HEIGHT' => $height_paneli,  
+            'PROPERTY_WIDTH' => $dlinaPaneli*1000,  
+            'PROPERTY_POKRITIE' => $pokritie,  
+        );
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME'/*, 'PROPERTY_TYPE', 'PROPERTY_POKRITIE', 'PROPERTY_HEIGHT', 'PROPERTY_VID', 'PROPERTY_WIDTH', 'PROPERTY_YACHEYKA', 'PROPERTY_DIAMETR', 'PROPERTY_VID_DIAMETR'*/);   
+        if($height_paneli == 3100 || $height_paneli == 4100) // будет из двух панелей
+        {
+            if($height_paneli == 3100){
+                if($arPost['type_panel'] == 'L' || $arPost['type_panel'] == 'О' || $arPost['type_panel'] == 'P' || $arPost['type_panel'] == 'I'){ // 1530+1530
+                    $koefColPaneli = 2;
+                    $arFilter['PROPERTY_HEIGHT'] = 1530;
+                    $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+                    while ($arEl = $res->GetNext())
+                    {
+                        //$arEl['COUNT'] = $countPanels*$koefColPaneli; // +1 это наращивание высоты калитки 
+                        $arEl['COUNT'] = $returnRes['PANELI']['ELEM'][$arEl['NAME']]['COUNT'] + $countPanels*$koefColPaneli;
+                        $returnRes['PANELI']['ELEM'][$arEl['NAME']] = $arEl;
+                                                
+                    }
+                    if(count($returnRes['PANELI']['ELEM']) == 0){
+                        $returnRes['PANELI']['ERROR'][] = 'панели типа '.$arType[$arPost['type_panel']].' цвета '.$colorValue.' и высотой 1600 не найдены.';
+                    }
+                }
+                elseif($arPost['type_panel'] == 'М'){ //2030+1030
+                    $arFilter['PROPERTY_HEIGHT'] = 2030;
+                    $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+                    while ($arEl = $res->GetNext())
+                    {
+                        //$arEl['COUNT'] = $countPanels*$koefColPaneli;
+                        $arEl['COUNT'] = $returnRes['PANELI']['ELEM'][$arEl['NAME']]['COUNT'] + $countPanels*$koefColPaneli;
+                        $returnRes['PANELI']['ELEM'][$arEl['NAME']] = $arEl; 
+                    }
+                    if(count($returnRes['PANELI']['ELEM']) == 0){
+                        $returnRes['PANELI']['ERROR'][] = 'панели типа '.$arType[$arPost['type_panel']].' цвета '.$colorValue.' и высотой 2100 не найдены.';
+                    }
+                    
+                    $arFilter['PROPERTY_HEIGHT'] = 1030;
+                    $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+                    while ($arEl = $res->GetNext())
+                    {
+                        //$arEl['COUNT'] = $countPanels*$koefColPaneli;
+                        $arEl['COUNT'] = $returnRes['PANELI']['ELEM'][$arEl['NAME']]['COUNT'] + $countPanels*$koefColPaneli;
+                        $returnRes['PANELI']['ELEM'][$arEl['NAME']] = $arEl; 
+                    }
+                    if(count($returnRes['PANELI']['ELEM']) == 0){
+                        $returnRes['PANELI']['ERROR'][] = 'панели типа '.$arType[$arPost['type_panel']].' цвета '.$colorValue.' и высотой 1100 не найдены.';
+                    }
+                }
+            }
+            elseif($height_paneli == 4100){ 
+            
+                $koefColPaneli = 2;
+                $arFilter['PROPERTY_HEIGHT'] = 2030;
+                $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+                while ($arEl = $res->GetNext())
+                {
+                    //$arEl['COUNT'] = $countPanels*$koefColPaneli;
+                    $arEl['COUNT'] = $returnRes['PANELI']['ELEM'][$arEl['NAME']]['COUNT'] + $countPanels*$koefColPaneli;
+                    $returnRes['PANELI']['ELEM'][$arEl['NAME']] = $arEl; 
+                }
+                if(count($returnRes['PANELI']['ELEM']) == 0){
+                    $returnRes['PANELI']['ERROR'][] = 'панели типа '.$arType[$arPost['type_panel']].' цвета '.$colorValue.' и высотой 2100  не найдены.';
+                } 
+            }
+        }
+        else{  
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            while ($arEl = $res->GetNext())
+            {
+                //$arEl['COUNT'] += $countPanels*$koefColPaneli;
+                $arEl['COUNT'] = $returnRes['PANELI']['ELEM'][$arEl['NAME']]['COUNT'] + $countPanels*$koefColPaneli;
+                $returnRes['PANELI']['ELEM'][$arEl['NAME']] = $arEl; 
+            }
+            if(count($returnRes['PANELI']['ELEM']) == 0){
+                $returnRes['PANELI']['ERROR'][] = 'панели длиной '.($dlinaPaneli*1000).' типа '.$arType[$arPost['type_panel']].' и высотой '.$height_paneli.' цвета '.$colorValue.' не найдены.';
+            }
+        }
+
+        
+        // получим Набор комплектов крепежа прямого 
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock,  
+            'ACTIVE' => 'Y',
+            'SECTION_CODE' => 'komplekty_krepezha', 
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            'PROPERTY_TYPE' => 'ККП',
+            'PROPERTY_SECHENIE' => $sechenieStolbaPaneli,  // сечение столба панели
+            'PROPERTY_POKRITIE' => $pokritie,  
+        );
+        
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        
+        while ($arEl = $res->GetNext())
+        {
+    //p($arEl);
+            //$arEl['COUNT'] = $countKrepegKKPNabor;
+            $arEl['COUNT'] = $returnRes['NABOR_KKP']['ELEM'][$sechenieStolbaPaneli.$pokritie]['COUNT'] += $countKrepegKKP;
+            $returnRes['NABOR_KKP']['ELEM'][$sechenieStolbaPaneli.$pokritie] = $arEl;
+        }
+        if(count($returnRes['NABOR_KKP']['ELEM']) == 0){
+            $returnRes['NABOR_KKP']['ERROR'][] = 'Набор комплектов крепежа прямого на сечение столба панели '.$sechenieStolbaPaneli.' покрытие '.$pokritie.' не найдены.';
+        } 
+        
+        // получим Набор комплектов крепежа концевого для панели 
+        if($countKrepegKKK > 0) // для не замкнутого периметра
+        {
+            $arFilter = array(
+                'ACTIVE' => 'Y',
+                'IBLOCK_ID' => $idIBlock,  
+                'SECTION_CODE' => 'komplekty_krepezha',   
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_TYPE' => 'ККК',
+                'PROPERTY_SECHENIE' => $sechenieStolbaPaneli,  
+                'PROPERTY_POKRITIE' => $pokritie,  
+            );
+            
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            {
+                //$arEl['COUNT'] = $countKrepegKKKNabor;
+                $arEl['COUNT'] = $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPaneli.$pokritie]['COUNT'] += $countKrepegKKK;// количество крепежей концевых
+                $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPaneli.$pokritie] = $arEl;
+                $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPaneli.$pokritie]['COUNT_IN_NABOR'] += $kolKrepegOtSecheniyaStolba[$sechenieStolbaPaneli]; // количество крепежей концевых
+            }
+            if(count($returnRes['NABOR_KKK']['ELEM']) == 0){
+                $returnRes['NABOR_KKK']['ERROR'][] = 'Набор комплектов крепежа концевого на сечение столба панели '.$sechenieStolbaPaneli.' покрытие '.$pokritie.' не найдены.';
+            }  
+        }
+        //высота столба$arSechenieHeight = array( 
+        $heightStolbaPanli = $arSechenieHeight[$arPost['type_panel']][$arPost['width']][$height_paneli]['HEIGHT_STOLBA'];
+
+        // получим столбы для панелей
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock,  
+            'ACTIVE' => 'Y',
+            'SECTION_CODE' => 'stolby_ograzhdeniya_gardis_s_07_2014',   
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            'PROPERTY_SECHENIE' => $postSechenieStolbaPaneli,
+            'PROPERTY_HEIGHT' => $heightStolbaPanli,//ceil($height_paneli/100) * 100,  
+            'PROPERTY_TYPE_INSTALL' => $arPost['type_install_stolba'],  
+            'PROPERTY_POKRITIE' => $pokritie, 
+        );
+        
+       
+        if($arPost['type_install_stolba'] == 'под бетонирование'){
+            $vidStolba = 'СОП';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+        }
+        elseif($arPost['type_install_stolba'] == 'на фланцах'){
+            $vidStolba = 'СОПФ';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+        }
+        elseif($arPost['type_install_stolba'] == 'со съёмным фланцем'){
+            $vidStolba = 'СОПФ';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+            
+            // получим Комплект опоры столба ограждения КО.160.60.60.40
+            //Комплект опоры столба ограждения КО.160.60.60.40.RAL
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $arFilterKoplect = array(
+                'IBLOCK_ID' => $idIBlock,  
+                'ACTIVE' => 'Y',
+                'SECTION_CODE' => 'komplekty_krepezha',   
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'NAME' => 'Комплект опоры столба ограждения КО.160.60.60.40.RAL',  
+            );
+            $res = CIBlockElement::GetList(Array(), $arFilterKoplect, false, false, $arSelect);
+            if ($res->SelectedRowsCount() > 0)
+            {
+                while ($arEl = $res->GetNext())
+                {
+                    $arEl['COUNT'] = $returnRes['KOMPLEKT_KO']['ELEM']['КО.160.60.60.40.RAL']['COUNT'] + $countStolbPaneli;
+                    $returnRes['KOMPLEKT_KO']['ELEM']['КО.160.60.60.40.RAL'] = $arEl;
+                    
+                }
+            }
+            else{
+                $returnRes['KOMPLEKT_KO']['ERROR'][''] = 'Комплект опоры столба ограждения КО.160.60.60.40 для панелей не найден.';
+            }
+        }
+        
+        $arFilter['PROPERTY_VID_STOLBA'] = $vidStolba;
+        
+//p($arFilter,'arFilter столбы');
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        if ($res->SelectedRowsCount() > 0)
+        {
+            while ($arEl = $res->GetNext())
+            {
+        //p($arEl);
+        //p($arEl['NAME'],'столбы под панели: ');
+                $arEl['COUNT'] = $returnRes['STOLBI_FOR_PANELI']['ELEM'][$arEl['ID']]['COUNT'] + $countStolbPaneli;
+                $returnRes['STOLBI_FOR_PANELI']['ELEM'][$arEl['ID']] = $arEl;
+                
+        // p($arEl['PROPERTY_TYPE_VALUE'],'PROPERTY_TYPE_VALUE'); 
+            }
+        }
+        else{
+            $returnRes['STOLBI_FOR_PANELI']['ERROR'][] = 'Столбы для панелей '.$arPost['type_install_stolba'].' покрытием '.$pokritie.' высотой '.$heightStolbaPanli.' вида '.$vidStolba.' и сечением '.$postSechenieStolbaPaneli.' не найдены.';
+        }
+        
+        // Штанги
+        if($arPost['shtanga'] == 'on'){
+            // получим Штанги
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock, 
+                'ACTIVE' => 'Y',
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_TYPE' => $arPost['type_shtanga'],
+                'PROPERTY_DLINA' => $arPost['dlina_shtanga'],  
+                'PROPERTY_USILENNOE' => 0,  
+                'PROPERTY_SECHENIE' => $sechenieStolbaPaneli,  
+            );
+    //p($arFilter,'arFilter Штанги: ');
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            {
+        //p($arEl);
+                $arEl['COUNT'] = $countStolbPaneli;
+                $returnRes['STANGI']['ELEM'][] = $arEl;
+            }
+            if(count($returnRes['STANGI']['ELEM']) == 0){
+                $returnRes['STANGI']['ERROR'][] = 'Штанги для столбов панелей типа '.$arPost['type_shtanga'].' длиной '.$arPost['dlina_shtanga'].' сечением '.$sechenieStolbaPaneli.' цветом '.$colorValue.' не найдены.';
+            }   
+//p($returnRes['STANGI'], 'STANGI');
+        }
+    }
+    
+    // ворота
+    if($arPost['vorota'] == 'on'){
+        // получим ворота
+        if($arPost['type_vorot'] != 'vorota_otkatnie')
+        {
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock,
+                'ACTIVE' => 'Y',            
+                'SECTION_CODE' => 'vorota_raspashnye',   
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_TYPE' => 'М',//$arPost['type_panel'],
+                'PROPERTY_HEIGHT' => $arPost['height_vorot'],  
+                'PROPERTY_WIDTH' => $arPost['width_vorot'],  
+                'PROPERTY_TYPE_INSTALL' => $arPost['type_install_vorot'],  
+            );
+            if($arPost['type_vorot'] != 'vorota_fit'){
+                $arFilter['PROPERTY_OTKRIVANIE'] = $arPost['type_open_vorot'];  
+            }
+            else{
+                $arFilter['PROPERTY_TYPE'] = 'F';  
+            } 
+            
+            if(($arPost['type_ob'] == 'sport' || $arPost['type_ob'] == 'sport-other') && $arPost['type_panel'] != 'О')
+                $arFilter['PROPERTY_VID'] = '2D';	
+            else
+                $arFilter['PROPERTY_VID'] = '3D';
+        }
+        else{
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock,
+                'ACTIVE' => 'Y',            
+                'SECTION_CODE' => 'vorota_otkatnye',   
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                //'PROPERTY_TYPE' => 'М',//$arPost['type_panel'],
+                'PROPERTY_HEIGHT' => $arPost['height_vorot']*10,  
+                'PROPERTY_WIDTH' => $arPost['width_vorot']*10,  
+                //'PROPERTY_TYPE_INSTALL' => $arPost['type_install_vorot'],  
+                'PROPERTY_OTKRIVANIE' => $arPost['type_open_vorot'],  
+            );
+        }
+ 
+//p($arFilter,'arFilter ворота: ');
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        
+        while ($arEl = $res->GetNext())
+        {
+    //p($arEl);
+            $arEl['COUNT'] = $arPost['kol_vorot'];
+            $returnRes['VOROTA']['ELEM'][] = $arEl;
+    // p($arEl['PROPERTY_TYPE_VALUE'],'PROPERTY_TYPE_VALUE'); 
+        }
+        if(count($returnRes['VOROTA']['ELEM']) == 0){
+            $returnRes['VOROTA']['ERROR'][] = 'Ворота высотой '.($arPost['height_vorot']*10).' шириной '.($arPost['width_vorot']*10).' установкой '.$arPost['type_install_vorot'].' открывание '.$arPost['type_open_vorot'].'  вида '.$arFilter['PROPERTY_VID'].' не найдены.';
+        } 
+        
+        if($arPost['width_vorot'] == 600 && $arPost['type_vorot'] != 'vorota_otkatnie'){
+             $arFilter = array(
+                'IBLOCK_ID' => $idIBlock,  
+                'ACTIVE' => 'Y',
+                'SECTION_CODE' => 'komplekty_krepezha',   
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'NAME' => 'Планка прижимная ПП.40.30 полимер', 
+            );
+
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            { 
+                $kolKKK = $kolKrepegNaVorota[$arPost['height_vorot']*10] * $arPost['kol_vorot'];
+                $returnRes['PLANKA']['ELEM'][$arEl['NAME']] = $arEl;
+                $returnRes['PLANKA']['ELEM'][$arEl['NAME']]['COUNT'] += $kolKKK ;
+                $returnRes['PLANKA']['ELEM'][$arEl['NAME']]['COUNT_IN_NABOR'] = $kolKrepegOtSecheniyaStolba[$sechenieStolbaPodVorota] ;
+                
+                //$countKKK_KPP += $kolKKK;
+            }
+            if(count($returnRes['PLANKA']['ELEM']) == 0){
+                $returnRes['PLANKA']['ERROR'][] = 'Планка прижимная ПП.40.30 полимер не найдена.';
+            }
+        }
+        else{
+            // получим Хомуты концевые на ворота = Набор комплектов крепежа концевого ККК.60.60.20.RAL (8) или Набор комплектов крепежа прямого ККП.60.40.20.ZC (12) 
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock,  
+                'ACTIVE' => 'Y',
+                'SECTION_CODE' => 'komplekty_krepezha',   
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_TYPE' => 'ККК',
+                'PROPERTY_SECHENIE' => $sechenieStolbaPodVorota,  
+                'PROPERTY_POKRITIE' => $pokritie,  
+            );
+
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            { 
+                $kolKKK = $kolKrepegNaVorota[$arPost['height_vorot']*10] * $arPost['kol_vorot'];
+                $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPodVorota.$pokritie] = $arEl;
+                $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPodVorota.$pokritie]['COUNT'] += $kolKKK ;
+                $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPodVorota.$pokritie]['COUNT_IN_NABOR'] = $kolKrepegOtSecheniyaStolba[$sechenieStolbaPodVorota] ;
+                
+                //$countKKK_KPP += $kolKKK;
+            }
+            if(count($returnRes['NABOR_KKK']['ELEM']) == 0){
+                $returnRes['NABOR_KKK']['ERROR'][] = 'Хомуты концевые на ворота сечением '.$sechenieStolbaPodVorota.' покрытием '.$pokritie.' c указаными размерами не найдены.';
+            }   
+        }
+       
+
+        // Штанги
+        /*if($arPost['shtanga'] == 'on'){
+            // получим Штанги
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock, 
+                'ACTIVE' => 'Y',
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_TYPE' => $arPost['type_shtanga'],
+                'PROPERTY_DLINA' => $arPost['dlina_shtanga'],  
+                'PROPERTY_USILENNOE' => 0,  
+                'PROPERTY_SECHENIE' => $sechenieStolbaPaneli,  
+            );
+    //p($arFilter,'arFilter Штанги: ');
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            {
+        //p($arEl);
+                $arEl['COUNT'] = $arPost['kol_vorot']*2;
+                $returnRes['STANGI']['ELEM'][] = $arEl;
+            }
+            if(count($returnRes['STANGI']['ELEM']) == 0){
+                $returnRes['STANGI']['ERROR'][] = 'Штанги для ворот типа '.$arPost['type_shtanga'].' длиной '.$arPost['dlina_shtanga'].' сечением '.$sechenieStolbaPaneli.' цветом '.$colorValue.' не найдены.';
+            }   
+//p($returnRes['STANGI']['ELEM'], 'STANGI');
+        }   */   
+        
+
+        // получим столбы для ворот
+        /*$arFilter = array(
+            'IBLOCK_ID' => $idIBlock,  
+            'ACTIVE' => 'Y',
+            'SECTION_CODE' => 'stolby_ograzhdeniya_gardis_s_07_2014',   
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            '%PROPERTY_SECHENIE' => $sechenieStolbaPodVorota,
+            'PROPERTY_HEIGHT' => $heightStolbaPanli,//ceil($height_paneli/100) * 100,   // берём столбы такой же высоты как под панели
+            'PROPERTY_TYPE_INSTALL' => $arPost['type_install_vorot'],  
+            'PROPERTY_POKRITIE' => $pokritie, 
+        );
+        if($arPost['type_install_vorot'] == 'под бетонирование'){
+            $vidStolba = 'СОП';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+        }
+        elseif($arPost['type_install_vorot'] == 'на фланцах'){
+            $vidStolba = 'СОПФ';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+        }  
+
+        $arFilter['PROPERTY_VID_STOLBA'] = $vidStolba;
+        
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        if ($res->SelectedRowsCount() > 0)
+        {
+            while ($arEl = $res->GetNext())
+            {
+                $arEl['COUNT'] = $arPost['kol_vorot']*2;
+                $returnRes['STOLBI_FOR_VOROT']['ELEM'][] = $arEl;
+            }
+        }
+        else{
+            $returnRes['STOLBI_FOR_VOROT']['ERROR'][] = 'Столбы для ворот '.$arPost['type_install_vorot'].' покрытием '.$pokritie.' высотой '.$heightStolbaPanli.' вида '.$vidStolba.' и сечением '.$sechenieStolbaPodVorota.' не найдены.';
+        }  */      
+    }
+    
+    // калитки
+    if($arPost['kalitka'] == 'on'){
+        
+        // получим калитки
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock, 
+            'ACTIVE' => 'Y',
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            'PROPERTY_TYPE' => 'М',//$arPost['type_panel'],
+            'PROPERTY_HEIGHT' => $arPost['height_kalitka'],  
+            'PROPERTY_WIDTH' => $arPost['width_kalitka'],   
+            'PROPERTY_TYPE_INSTALL' => $arPost['type_install_kalitka'],  
+        );
+        if($arPost['type_kalitka'] != 'kalitka_fit'){
+            $arFilter['PROPERTY_OTKRIVANIE'] = $arPost['type_open_kalitka'];  
+        }
+        else{
+            $arFilter['PROPERTY_TYPE'] = 'F';  
+        }
+        
+        if($arPost['type_install_kalitka'] == 'под бетонирование')
+            $arFilter['SECTION_CODE'] = 'kalitki_raspashnye_stolby_pod_betonirovanie';	
+        else
+            $arFilter['SECTION_CODE'] = 'kalitki_raspashnye_stolby_s_flantsem';	
+        
+        if(($arPost['type_ob'] == 'sport' || $arPost['type_ob'] == 'sport-other') && $arPost['type_panel'] != 'О')
+            $arFilter['PROPERTY_VID'] = '2D';	
+        else
+            $arFilter['PROPERTY_VID'] = '3D';	
+        
+
+            
+//p($arFilter,'arFilter калитки: ');
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        
+        while ($arEl = $res->GetNext())
+        {
+    //p($arEl);
+            $arEl['COUNT'] = $arPost['kol_kalitka'];
+            $returnRes['KALITKA']['ELEM'][] = $arEl;
+    // p($arEl['PROPERTY_TYPE_VALUE'],'PROPERTY_TYPE_VALUE'); 
+        }
+        if(count($returnRes['KALITKA']['ELEM']) == 0){
+            $returnRes['KALITKA']['ERROR'][] = 'Калитки высотой '.($arPost['height_kalitka']*10).' шириной '.($arPost['width_kalitka']*10).' установкой '.$arPost['type_install_kalitka'].' открывание '.$arFilter['PROPERTY_OTKRIVANIE'].'  вида '.$arFilter['PROPERTY_VID'].' не найдены.';;
+        } 
+
+        // получим Хомуты концевые на калитки = Набор комплектов крепежа концевого ККК.60.60.20.RAL (8) или Набор комплектов крепежа прямого ККП.60.40.20.ZC (12) 
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock,
+            'ACTIVE' => 'Y',
+            'SECTION_CODE' => 'komplekty_krepezha',   
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            'PROPERTY_TYPE' => 'ККК',
+            'PROPERTY_SECHENIE' => $sechenieStolbaPodKalitku,  
+            'PROPERTY_POKRITIE' => $pokritie,  
+        );
+        
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        
+        while ($arEl = $res->GetNext())
+        {
+            $kolKKK = $kolKrepegNaKalitku[$arPost['height_kalitka']*10] * $arPost['kol_kalitka'];
+            $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPodKalitku.$pokritie] = $arEl;
+            $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPodKalitku.$pokritie]['COUNT'] += $kolKKK;
+            $returnRes['NABOR_KKK']['ELEM'][$sechenieStolbaPodKalitku.$pokritie]['COUNT_IN_NABOR'] += $kolKrepegOtSecheniyaStolba[$sechenieStolbaPodKalitku];
+            //$countKKK_KPP += $kolKKK;
+        }
+        if(count($returnRes['NABOR_KKK']['ELEM']) == 0){
+            $returnRes['NABOR_KKK']['ERROR'][] = 'Хомуты концевые на калитки c указаными размерами не найдены.';
+        }   
+
+        // Штанги
+        /*if($arPost['shtanga'] == 'on'){
+            // получим Штанги
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock, 
+                'ACTIVE' => 'Y',
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_TYPE' => $arPost['type_shtanga'],
+                'PROPERTY_DLINA' => $arPost['dlina_shtanga'],  
+                'PROPERTY_USILENNOE' => 0,  
+                'PROPERTY_SECHENIE' => $sechenieStolbaPaneli,  
+            );
+//p($arFilter,'arFilter Штанги: ');
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            {
+        //p($arEl);
+                $arEl['COUNT'] = $arPost['kol_kalitka']*2;
+                $returnRes['STANGI']['ELEM'][] = $arEl;
+            }
+            if(count($returnRes['STANGI']['ELEM']) == 0){
+                $returnRes['STANGI']['ERROR'][] = 'Штанги для калиток типа '.$arPost['type_shtanga'].' длиной '.$arPost['dlina_shtanga'].' сечением '.$sechenieStolbaPaneli.' цветом '.$colorValue.' не найдены.';
+            }   
+//p($returnRes['STANGI']['ELEM'], 'STANGI');
+        } */
+        
+        // получим столбы для калиток
+        /*$arFilter = array(
+            'IBLOCK_ID' => $idIBlock,  
+            'ACTIVE' => 'Y',
+            'SECTION_CODE' => 'stolby_ograzhdeniya_gardis_s_07_2014',   
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            '%PROPERTY_SECHENIE' => $sechenieStolbaPodKalitku,
+            'PROPERTY_HEIGHT' => $heightStolbaPanli,//ceil($height_paneli/100) * 100,   // берём столбы такой же высоты как под панели
+            'PROPERTY_TYPE_INSTALL' => $arPost['type_install_kalitka'],  
+            'PROPERTY_POKRITIE' => $pokritie, 
+        );
+        if($arPost['type_install_kalitka'] == 'под бетонирование'){
+            $vidStolba = 'СОП';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+        }
+        elseif($arPost['type_install_kalitka'] == 'на фланцах'){
+            $vidStolba = 'СОПФ';
+            if($arPost['shtanga'] == 'on'){
+                $vidStolba .= 'Ш';
+            }
+        }  
+
+        $arFilter['PROPERTY_VID_STOLBA'] = $vidStolba;
+        
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        if ($res->SelectedRowsCount() > 0)
+        {
+            while ($arEl = $res->GetNext())
+            {
+                $arEl['COUNT'] = $arPost['kol_kalitka']*2;
+                $returnRes['STOLBI_FOR_KALITKA']['ELEM'][] = $arEl;
+            }
+        }
+        else{
+            $returnRes['STOLBI_FOR_KALITKA']['ERROR'][] = 'Столбы для калитки '.$arPost['type_install_kalitka'].' покрытием '.$pokritie.' высотой '.$heightStolbaPanli.' вида '.$vidStolba.' и сечением '.$sechenieStolbaPodKalitku.' не найдены.';
+        }*/
+    }
+    
+    // ягоза СББ
+    if($arPost['egoza_sbb'] == 'on'){// периметр
+        // получим ягозу
+        $cntSbb = count($arPost['egoza_perimetr_sbb']);
+        for($i=0; $i < $cntSbb; $i++)
+        {
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock, 
+                'ACTIVE' => 'Y',
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_DIAMETR_YAGOZI' => $arPost['diametr_yagozi_sbb'][$i] , // диаметр
+                'PROPERTY_KOL_VITKOV' => $arPost['kol_vitkov_yagozi_sbb'][$i] ,  
+                'TYPE' => 'СББ',  
+            );
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            {
+                $arEl['COUNT'] = ceil($arPost['egoza_perimetr_sbb'][$i] / 10);
+                $returnRes['SBB']['ELEM'][] = $arEl;
+            }
+            if(count($returnRes['SBB']['ELEM']) == 0){
+                $returnRes['SBB']['ERROR'][] = 'СББ Егоза диаметром '.$arPost['diametr_yagozi_sbb'][$i] .' количество витков '.$arPost['kol_vitkov_yagozi_sbb'][$i] .' не найдена. ('.($arPost['egoza_perimetr_sbb'][$i]  / 10).' бухт)';
+            }   
+        }
+    }
+    
+    // ягоза ПББ
+    if($arPost['egoza_pbb'] == 'on'){// периметр
+        // получим ягозу
+        $cntSbb = count($arPost['egoza_perimetr_pbb']);
+        for($i=0; $i < $cntSbb; $i++)
+        {
+            $arFilter = array(
+                'IBLOCK_ID' => $idIBlock, 
+                'ACTIVE' => 'Y',
+                'INCLUDE_SUBSECTIONS' => 'Y',  
+                'PROPERTY_DIAMETR_YAGOZI' => $arPost['diametr_yagozi_pbb'][$i], // диаметр
+                'PROPERTY_KOL_VITKOV' => $arPost['kol_vitkov_yagozi_pbb'][$i],  
+                'TYPE' => 'ПББ', 
+            );
+            $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            
+            while ($arEl = $res->GetNext())
+            {
+                $arEl['COUNT'] = ceil($arPost['egoza_perimetr_pbb'][$i] / 10);
+                $returnRes['PBB']['ELEM'][] = $arEl;
+            }
+            if(count($returnRes['PBB']['ELEM']) == 0){
+                $returnRes['PBB']['ERROR'][] = 'ПББ Егоза диаметром '.$arPost['diametr_yagozi_pbb'][$i].' количество витков '.$arPost['kol_vitkov_yagozi_pbb'][$i].' не найдена. ('.($arPost['egoza_perimetr_pbb'][$i] / 10).' бухт)';
+            }   
+        }   
+    }
+p($coefficientForKozirek, 'coefficientForKozirek');
+    // козырёк
+    if($arPost['kozirek'] == 'on'){
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock, 
+            'ACTIVE' => 'Y',
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+        );
+        
+        if($arPost['type_panel'] == 'О'){
+            $arFilter['NAME'] = 'Панель ограждения П-О3D.2500.630.200.55.4,8.4,8.RAL';
+        }
+        else{
+            $arFilter['NAME'] = 'Панель ограждения П-М2D.2500.630.200.55.5.6х2.RAL';
+        }
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        
+        if ($arEl = $res->GetNext())
+        {
+
+            $arEl['COUNT'] = ceil($arPost['kozirek_perimetr'] / $coefficientForKozirek);
+            
+            $returnRes['kozirek']['ELEM'][] = $arEl;
+        }
+        if(count($returnRes['kozirek']['ELEM']) == 0){
+            $returnRes['kozirek']['ERROR'][] = 'Козырёк не найден';
+        }   
+    }
+    
+     // Антивандальный крепёж
+    if($arPost['antivand_krepeg'] == 'on'){
+        $arFilter = array(
+            'IBLOCK_ID' => $idIBlock, 
+            'ACTIVE' => 'Y',
+            'INCLUDE_SUBSECTIONS' => 'Y',  
+            'NAME' => 'Гайка М6 антиванд',
+            'PROPERTY_KOL_VITKOV' => $arPost['kol_vitkov_yagozi_pbb'],  
+        );
+        $arSelect = array('ID', 'IBLOCK_ID', 'NAME');   
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        
+        while ($arEl = $res->GetNext())
+        {
+            $arEl['COUNT'] = 1;
+            $returnRes['antivand_krepeg']['ELEM'][] = $arEl;
+        }
+        if(count($returnRes['antivand_krepeg']['ELEM']) == 0){
+            $returnRes['antivand_krepeg']['ERROR'][] = 'Антивандальный крепёж не найден';
+        }   
+    }
+
+//p($returnRes);  
+        // получим цены для всех товаров
+        
+    foreach($returnRes as $key => $arElements)
+    {
+        $arElementNew = array();
+        foreach($arElements['ELEM'] as $element)
+        {
+            if($arPost['color']  == 'цинк') // нет ТП (как выяснилось оно может быть оказывается)
+            {
+                $resPrice = CPrice::GetList(array(),array('PRODUCT_ID' => $element['ID'],'CATALOG_GROUP_ID' => 1));
+                if ($arPrice = $resPrice->Fetch())
+                {
+                    $element['PRICE'] = CurrencyFormat($arPrice["PRICE"], $arPrice["CURRENCY"]);
+                    $element['PRICE_VALUE'] = $arPrice["PRICE"];
+                    $element['CURRENCY'] = $arPrice["CURRENCY"];
+                }
+                else{ // получим первое ТП
+                    //$isTP = false;
+                    $arOffers = CCatalogSKU::getOffersList( $element['ID'], $element['IBLOCK_ID'], array(), array('ID', 'IBLOCK_ID', 'NAME'), array());
+                    foreach ($arOffers[$element['ID']] as $offer)
+                    {
+                        $element['ID'] = $offer['ID'];
+                        //$isTP = true;
+                        break;
+                    }
+                }
+            }
+            else{ // получим ТП
+                $arOffers = CCatalogSKU::getOffersList( $element['ID'], $element['IBLOCK_ID'], array('%NAME' => $colorValue), array('ID', 'IBLOCK_ID', 'NAME'), array());
+                foreach ($arOffers[$element['ID']] as $offer)
+                {
+                    $element['NAME'] = $offer['NAME'];
+                    $element['ID'] = $offer['ID'];
+                }
+            }
+            
+            $resPrice = CPrice::GetList(array(),array('PRODUCT_ID' => $element['ID'],'CATALOG_GROUP_ID' => 1));
+            if ($arPrice = $resPrice->Fetch())
+            {
+                $element['PRICE'] = CurrencyFormat($arPrice["PRICE"], $arPrice["CURRENCY"]);
+                $element['PRICE_VALUE'] = $arPrice["PRICE"];
+                $element['CURRENCY'] = $arPrice["CURRENCY"];
+            }
+            else
+            {
+                $returnRes[$key]['ERROR'][] = 'Цена для '.$element['NAME'].' цвета '.$colorValue.' не найдена!';
+            }
+            
+            $arElementNew[] = $element;
+            
+           
+        }
+        $returnRes[$key]['ELEM'] = $arElementNew;
+    }
+    
+//die();
+//p($returnRes); 
+    $obCache->EndDataCache($returnRes);	
+
+} 
+
+foreach($returnRes as $key => $arElements)
+{
+    foreach($arElements['ERROR'] as $text)
+    {
+        echo $text.'<br>';
+    }
+}
+
+$i=1;
+$strElRes = '';
+$countPanelForKozirek = 0;
+?>
+<div class="order-elemennts hidden">
+    <?
+    $countKKK_KKP = 0;
+    foreach($returnRes as $key => $arElements)
+    {
+        foreach($arElements['ELEM'] as $arValue){
+            
+            if($key == 'PANELI'){
+                $countPanelForKozirek += $arValue['COUNT'];
+echo 'количество панелей: '.  $countPanelForKozirek.'<br>';
+            } 
+            elseif($key == 'NABOR_KKP'){
+                $arValue['COUNT'] = ceil($arValue['COUNT'] / 12);
+                $countKKK_KKP += $arValue['COUNT'] *12;
+echo 'число крепежей KKP: '. ($arValue['COUNT'] *12).'<br>';
+            } 
+            elseif($key == 'NABOR_KKK'){
+                $arValue['COUNT'] = ceil($arValue['COUNT'] / $arValue['COUNT_IN_NABOR']);
+                $countKKK_KKP += $arValue['COUNT'] * $arValue['COUNT_IN_NABOR'];
+echo 'число крепежей ККК: '. ($arValue['COUNT'] * $arValue['COUNT_IN_NABOR']).'<br>';
+            }
+            elseif($key == 'kozirek'){ // здесь учитываем что козырёк в конце массива
+                if( $arPost['type_ob'] == 'sport' || $arPost['type_ob'] == 'sport-other'){
+                    $arValue['COUNT'] = ($countPanelForKozirek/2);
+                    if($returnRes['kozirek'] && is_array($returnRes['kozirek']['ELEM'])){
+                        $returnRes['kozirek']['ELEM'][0]['COUNT'] = $arValue['COUNT'];
+                    }
+                }
+echo 'количество козырьков: '. ($countPanelForKozirek/2).'<br>'; 
+p($countPanelForKozirek/2, 'количество козырьков');
+            }
+            elseif($key == 'antivand_krepeg'){ // здесь учитываем что антивандальный крепеж в конце массива
+                $arValue['COUNT'] = ($countKKK_KKP*2);
+echo 'число крепежей 1: '. ($countKKK_KKP).'<br>';
+echo 'число крепежей 2: '. ($countKKK_KKP*2).'<br>';
+                if($returnRes['antivand_krepeg'] && is_array($returnRes['antivand_krepeg']['ELEM'])){
+                    $returnRes['antivand_krepeg']['ELEM'][0]['COUNT'] = $countKKK_KKP*2;
+                }
+            }
+            
+
+            $strElRes .= $arValue['ID'].':'.$arValue['COUNT'].';';  
+            ?>
+            
+        <?}
+       
+    }
+    
+    ?> 
+    <input type="hidden" name="elements" id="elements" value="<?=$strElRes?>">
+</div>
+<?
+////
+//if(!$_POST['order_submit'])
+//{
+?>
+<table class="result">
+    <tr>
+        <th>№</th>
+        <th>Наименование</th>
+        <th>Характеристики</th>
+        <th>Кол-во</th>
+        <th>Цена</th>
+        <th>Стоимость</th>
+    </tr>
+    
+    <?
+    $totalSumm = 0;
+    foreach($returnRes as $key => $arElements)
+    {
+        foreach($arElements['ELEM'] as $arValue){
+            
+            if($key == 'NABOR_KKP'){
+                $arValue['COUNT'] = ceil($arValue['COUNT'] / 12);
+            } 
+            elseif($key == 'NABOR_KKK'){
+                $arValue['COUNT'] = ceil($arValue['COUNT'] / $arValue['COUNT_IN_NABOR']);
+            }
+              
+            $summ = $arValue['PRICE_VALUE']*$arValue['COUNT'];
+            $totalSumm += $summ;
+            ?>
+            <tr>
+                <td class="num"><?=$i++?></td>
+                <td class="input-name">
+                    <?echo $arValue['NAME'].'<br>';?>
+                </td>
+                <td class="props"></td>
+                <td class="kol"><?=$arValue['COUNT']?></td>
+                <td class="price"><?=$arValue['PRICE']?></td>
+                <td class="summ"><?=CurrencyFormat($summ, $arValue["CURRENCY"])?></td>
+            </tr>
+        <?}
+    }
+    
+    ?>
+    <tr>
+        <td class="summ-total" colspan="6">
+            <b>Итого: <?=CurrencyFormat($totalSumm, $arValue["CURRENCY"])?></b>
+        </td>
+    </tr>
+    
+    <?
+    /*
+    if(count($returnRes['PANELI']['ELEM']) > 0){
+        foreach($returnRes['PANELI']['ELEM'] as $arValue){?>
+            <tr>
+                <td class="num"><?=$i++?></td>
+                <td class="input-name">
+                    <?echo $arValue['NAME'].'<br>';?>
+                </td>
+                <td class="props"></td>
+                <td class="kol"><?=$arValue['COUNT']//$countPanels*$koefColPaneli?></td>
+                <td class="price"><?=$arValue['PRICE']?></td>
+                <td class="summ"></td>
+            </tr>
+        <?}
+    }else{?>
+        <tr>
+            <td cols="6">
+                <?echo $arValue['NAME'].'<br>';?>
+            </td>   
+        </tr>   
+    <?}?>
+    <?//foreach($returnRes['PANELI']['ERROR'] as $text){
+       // echo $text.'<br>';
+    }//?>
+    
+    
+        <?
+        if(count($returnRes['PANELI_KKP']['ELEM']) > 0){ //Набор комплектов крепежа прямого ККП.
+            foreach($returnRes['PANELI_KKP']['ELEM'] as $arValue){?>
+                <tr>
+                    <td class="num"><?=$i++?></td>
+                    <td class="input-name">
+                        <?echo $arValue['NAME'].'<br>';?>
+                    </td>
+                    <td class="props"></td>
+                    <td class="kol"><?=$arValue['COUNT']?></td>
+                    <td class="price"></td>
+                    <td class="summ"></td>
+                </tr>
+            <?}
+         }else{
+            //echo $returnRes['PANELI_KKP']['ERROR'];    
+        }?>
+    <?if($arPost['kreplenie'] == 'homut'){ // хомут?>    
+        <?
+        if(count($returnRes['PANELI_KKK']['ELEM']) > 0){ //Набор комплектов крепежа концевого для панели
+            foreach($returnRes['PANELI_KKK']['ELEM'] as $arValue){?>
+                <tr>
+                    <td class="num"><?=$i++?></td>
+                    <td class="input-name">
+                        <?echo $arValue['NAME'].'<br>';?>
+                    </td>
+                    <td class="props"></td>
+                    <td class="kol"><?=$arValue['COUNT']?></td>
+                    <td class="price"></td>
+                    <td class="summ"></td>
+                </tr>
+            <?}
+         }else{
+            //echo $returnRes['PANELI_KKK']['ERROR'];    
+        }?>
+
+    <?}?>
+    
+    
+   
+<?
+    if(count($returnRes['STOLBI_FOR_PANELI']['ELEM']) > 0){ //Набор комплектов крепежа концевого для панели
+        foreach($returnRes['STOLBI_FOR_PANELI']['ELEM'] as $arValue){?>
+            <tr>
+                <td class="num"><?=$i++?></td>
+                <td class="input-name">
+                    <?echo $arValue['NAME'].'<br>';?>
+                </td>
+                <td class="props"></td>
+                <td class="kol"><?=$arValue['COUNT']?></td>
+                <td class="price"></td>
+                <td class="summ"></td>
+            </tr>
+        <?}
+     }
+     
+    // foreach($returnRes['STOLBI_FOR_PANELI']['ERROR'] as $text){
+        // echo $text.'<br>';
+    // }?>
+
+    
+    <?if($arPost['vorota'] == 'on'){?>
+        <tr>
+            <td class="num"><?=$i++?></td>
+            <td class="input-name">
+                <?
+                if(count($returnRes['VOROTA']['ELEM']) > 0){
+                    foreach($returnRes['VOROTA']['ELEM'] as $arValue){
+                        echo $arValue['NAME'].'<br>';
+                    }
+                }else{
+                   // echo $returnRes['VOROTA']['ERROR'];    
+                }?>
+            </td>
+            <td class="props"></td>
+            <td class="kol"><?=$arPost['kol_vorot']?></td>
+            <td class="price"></td>
+            <td class="summ"></td>
+        </tr>
+        
+        <tr>
+            <td class="num"><?=$i++?></td>
+            <td class="input-name">
+                <?
+                //Хомуты концевые на ворота
+                if(count($returnRes['VOROTA_KKK']['ELEM']) > 0){
+                    foreach($returnRes['VOROTA_KKK']['ELEM'] as $arValue){
+                        echo $arValue['NAME'].' (хомуты концевые на ворота)<br>';
+                    }
+                }else{
+                   // echo $returnRes['VOROTA_KKK']['ERROR'];    
+                }?>
+            </td>
+            <td class="props"></td>
+            <td class="kol"><?=$countKrepegKKKNaborVorota?></td>
+            <td class="price"></td>
+            <td class="summ"></td>
+        </tr>
+    <?}?>
+    
+    <?if($arPost['kalitka'] == 'on'){?>
+        <tr>
+            <td class="num"><?=$i++?></td>
+            <td class="input-name">
+                <?
+                if(count($returnRes['KALITKA']['ELEM']) > 0){
+                    foreach($returnRes['KALITKA']['ELEM'] as $arValue){
+                        echo $arValue['NAME'].'<br>';
+                    }
+                }else{
+                   // echo $returnRes['KALITKA']['ERROR'];    
+                }?>
+            </td>
+            <td class="props"></td>
+            <td class="kol"><?=$arPost['kol_kalitka']?></td>
+            <td class="price"></td>
+            <td class="summ"></td>
+        </tr>
+        
+        <tr>
+            <td class="num"><?=$i++?></td>
+            <td class="input-name">
+                <?
+                if(count($returnRes['KALITKA_KKK']['ELEM']) > 0){
+                    foreach($returnRes['KALITKA_KKK']['ELEM'] as $arValue){
+                        echo $arValue['NAME'].' (хомуты концевые на калитку)<br>';
+                    }
+                }else{
+                    //echo $returnRes['KALITKA_KKK']['ERROR'];    
+                }?>
+            </td>
+            <td class="props"></td>
+            <td class="kol"><?=$countKrepegKKKNaborKalitka?></td>
+            <td class="price"></td>
+            <td class="summ"></td>
+        </tr>
+    <?}?>
+    <? // штанги
+    if(count($returnRes['STANGI']['ELEM']) > 0){ //штанги
+        foreach($returnRes['STANGI']['ELEM'] as $arValue){?>
+            <tr>
+                <td class="num"><?=$i++?></td>
+                <td class="input-name">
+                    <?echo $arValue['NAME'].'<br>';?>
+                </td>
+                <td class="props"></td>
+                <td class="kol"><?=$arValue['COUNT']?></td>
+                <td class="price"><?=$arValue['PRICE']?></td>
+                <td class="summ"><?=$arValue['PRICE_VALUE']*$arValue['COUNT']?></td>
+            </tr>
+        <?}
+     }
+     
+    foreach($returnRes['STANGI']['ERROR'] as $text){
+        echo $text.'<br>';
+    }
+    */
+    ?>
+    
+
+</table>
+<?
+//p($returnRes);
+//sort($returnRes['PANELI']['VID_DIAMETR']);
+// }
+// else{ //создаём заказ
+    // p($_POST,'_POST');
+// }
+
+?>

@@ -1,0 +1,287 @@
+/*
+@media screen and (min-width: 992px)
+{
+	.formTender {
+		padding: 50px 60px;
+	}
+}
+*/
+.tenderShadow{
+	position:fixed;
+	width:100%;
+	height:100%;
+	top:0;
+	left:0;
+	display:none;
+	opacity:.7;
+	
+	background-color:#000;
+	z-index:100;
+}
+.formTender{
+	position:absolute;	
+	display:none;
+    width: 640px;
+
+	left:0;
+	right:0;
+	margin:40px auto;
+	padding:50px 40px;
+		
+	background-color:#e8e8e8;
+	box-sizing:border-box;
+	
+	z-index:101;
+}
+.formContain{
+
+    float: left;
+    box-sizing: border-box;
+    margin-left: -20px;
+    margin-right: -20px;
+}
+.styleWrap .fancybox-skin{
+	
+	background-color:#e8e8e8;
+}
+.form-cancel{
+	position:absolute;
+	width:36px;
+	height:36px;
+    top: 10px;
+    right: 10px;
+    background-image: url(/img/fancybox_sprite.png);
+	background-position:0 0;
+	cursor:pointer;
+}
+
+.tender-text{
+	display:inline-block;
+	width:100%;
+	padding:0 20px;
+    margin-bottom: 20px;	
+}
+
+.tender-row{
+    float:left;
+	width: 100%;	
+	padding:0 20px;
+}
+
+.tender-row-two{
+	float:left;
+    width: 50%;	
+	padding:0 20px;
+}
+
+.tender-label{
+    display: inline-block;
+    padding: 7px 0 7px 0;
+	color: #000;
+}
+
+.tender-input{
+	position:relative;
+	display: inline-block;
+	width: 100%;
+	padding-bottom: 20px;
+	font-size: 0;
+}
+
+.tender-input textarea{
+	width: 100%;
+	padding: 10px 10px;
+	font-size: 16px;
+    color: #000;
+	resize: none;
+}
+
+.inputfile,
+.tender-input input[type="text"]{
+	width: 100%;
+	padding: 10px 10px;
+	font-size: 16px;
+    color: #000;
+}
+
+.tender-error-box{
+    position: absolute;
+    width: 100%;
+    height: 20px;
+	overflow:hidden;
+
+}
+
+.tender-error-text{
+	position: absolute;
+    width: 100%;
+    padding: 2px 10px;
+    top: -22px;
+    left: 0;
+    background-color: #fb3838;
+    color: #fff;
+    font-size: 12px;
+	transition:top .4s;
+}
+.input-error .tender-error-text{
+	top: 0px;
+	
+}
+
+.form__nav{
+    display: inline-block;
+	width:100%;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.formSubmit{
+    display: inline-block;
+    padding: 20px 29%;
+    background-color: #ffcc00;
+    border: 0;
+    border-radius: 4px;
+    color: #000;	
+}
+
+.formSubmit:hover{
+	box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.39);
+}
+
+
+.form_success{	
+	display:none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.calendar-icon{
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    width: 36px!important;
+    height: auto!important;
+}
+
+.tenderCallback{
+	width:420px;
+	text-align: center;
+	
+}
+
+
+
+/* Container for 2 child elements (button & filename) */
+.fileUpload {
+    background: #fff;
+    border: 0;
+    display: block;
+    margin: 2% 0 5% 0;
+    width: 100%;
+    /* border radius */
+    -o-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+/* The button */
+.fileUpload .fileBtn {
+    background: #ffcc00;
+    cursor: pointer;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 3% 0;
+    text-align: center;
+    width: 33%;
+    /* border radius */
+    -o-border-radius: 6px 0 0 6px;
+    -moz-border-radius: 6px 0 0 6px;
+    -webkit-border-radius: 6px 0 0 6px;
+    border-radius: 6px 0 0 6px;
+}
+.fileUpload .fileBtn:hover {
+	box-shadow: 3px 3px 7px 2px rgba(0,0,0,0.39);
+}
+/* Where the input-name will be filled in */
+.fileUpload .fileName {
+    float: right;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 67%;
+    text-align: left;
+    color: #000;
+    padding: 3% 3%;
+	font-size:16px;
+}
+/* Animation (hover) */
+/*
+.fileUpload .fileBtn:hover {
+    -webkit-transition-property: background;
+    -webkit-transition-duration: 0.2s;
+    -webkit-transition-timing-function: ease-in;
+    -moz-transition-property: background;
+    -moz-transition-duration: 0.2s;
+    -moz-transition-timing-function: ease-in;
+    -o-transition-property: background;
+    -o-transition-duration: 0.2s;
+    -o-transition-timing-function: ease-in;
+    -ms-transition-property: background;
+    -ms-transition-duration: 0.2s;
+    -ms-transition-timing-function: ease-in;
+    transition-property: background;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in;
+}*/
+/* Clear input-parent, due to child-floats */
+.fileUpload:after {
+    clear: both;
+    content: " ";
+    display: block;
+    height: 0;
+    line-height: 0;
+    visibility: hidden;
+}
+
+	@media only screen and (max-width:640px) {
+
+        .formTender{
+			width: 480px;
+
+			left:0;
+			right:0;
+			margin:40px auto;
+			padding:50px 20px;	
+		}
+		.tender-label {font-size:14px;}
+		
+    }
+	
+	@media only screen and (max-width:480px) {
+
+        .formTender{
+			width: 300px;
+
+			left:0;
+			right:0;
+			margin:40px auto;
+			padding:50px 20px;	
+		}
+		.tender-text p{font-size:14px;}
+		.tender-row-two{width:100%;}
+		.tender-label {font-size:14px;}
+		
+		.formSubmit {padding: 13px 29%;}
+
+
+        .fancybox-wrap.fancybox-desktop.fancybox-type-inline.styleWrap.fancybox-opened{
+            width: 400px !important;
+            padding: 15px 10px;
+        }
+
+            .tenderCallback1 h2, .tenderCallback2 h2{
+                font-size: 18px;
+            }	
+
+    }
+	

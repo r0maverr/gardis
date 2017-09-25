@@ -1,0 +1,26 @@
+ .date{
+    display: block;
+    font-size: 15px;
+    font-style: italic;
+    margin-bottom: 10px;
+    color: #838383;
+}
+
+.inner-content h1{
+    padding: 5px !important;
+}
+img.grey_border {
+    float: left;
+    margin: 0px 15px 15px 0px;
+}
+@media(max-width:768px) {
+    img.grey_border {
+        float:none;
+        margin:0 auto
+    }
+    a.fancybox {
+        display:flex;
+        justify-content:center;
+        width:100%;
+    }
+}

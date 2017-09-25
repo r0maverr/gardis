@@ -1,0 +1,5 @@
+.truncate_more_link, .truncate_more_link:hover, .truncate_more_link:active, .truncate_more_link:visited{
+	color: #838383 !important;
+	text-decoration: underline;
+}
+

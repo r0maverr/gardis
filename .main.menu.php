@@ -1,0 +1,32 @@
+<?
+$aMenuLinks = Array(
+	Array(
+		"Дилерам", 
+		"/dealers/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Компаниям", 
+		"/kompaniyam/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Частным лицам", 
+		"/chastnim-licam/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Проектировщикам", 
+		"/proektirovshikam/", 
+		Array(), 
+		Array(), 
+		"" 
+	)
+);
+?>

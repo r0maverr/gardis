@@ -1,0 +1,28 @@
+.btn{
+	width: 150px;
+	padding: 6px !important;
+}
+.btn_nav{
+    position: absolute;
+    right: -325px;
+    bottom: 0;
+}
+
+.btn_nav-col{
+    float: left;
+    padding: 0 5px 0 0;
+	overflow:hidden;
+	width:160px;
+	text-align:center;
+}
+@media (max-width: 992px){
+
+.ready-solutions-list .img-wrap {
+    margin-bottom: 60px;
+}	
+
+	.btn_nav {
+    right: 5px;
+    bottom: -50px;
+	}
+}

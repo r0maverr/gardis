@@ -1,0 +1,61 @@
+/*JIVO round button call*/
+.jivocb-container {
+  perspective: 1000;
+  position:fixed;
+  bottom: 270px; /*position Y*/
+  right: 10px; /*position X*/
+  display: none; /*while jivo not loaded*/
+    -webkit-box-shadow: 0 12px 25px 8px rgba(0,0,0,.17);
+    -moz-box-shadow: 0 12px 25px 8px rgba(0,0,0,.17);
+    box-shadow: 0 12px 25px 8px rgba(0,0,0,.17);
+}
+
+.jivocb-container, .jivocb-front, .jivocb-back {
+  width: 45px;
+  height: 45px;
+  border-radius:45px;
+}
+
+.jivocb-wrap {
+	transition: 0.6s;
+	transform-style: preserve-3d;
+	position: relative;
+}
+
+.jivocb-front, .jivocb-back {
+	backface-visibility: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.jivocb-front {
+	z-index: 2;
+	transform: rotateY(0deg);
+  background:url('call-button.png') no-repeat #fff;
+  background-size: 90%;
+  background-position:50% 50%;
+  animation: color 6s linear infinite;
+  box-shadow:0 0 0px 0px white, 0 0 6px 10px #a24d8d; /* animation*/
+}
+@keyframes color {
+   10%, 15%, 35%, 40%, 60%, 65%, 85%, 90%  {box-shadow:0 0 0px 0px white, 0 0 0px 6px #a24d8d ;}
+}
+  
+.jivocb-container .jivocb-wrap {
+  transform-origin: 100% 40px; 
+}
+
+.jivocb-container:hover .jivocb-wrap {
+		cursor: pointer;
+}
+.jivocb-call {
+  background:url('jcall.png') no-repeat #fff;
+  background-size: 100%;
+  background-position:50% 50%;
+  width:80px;
+  height:40px;
+  border-radius:40px 40px 0 0 ;
+-moz-border-radius:40px 40px 0 0 ;
+-webkit-border-radius:40px 40px 0 0 ;
+}

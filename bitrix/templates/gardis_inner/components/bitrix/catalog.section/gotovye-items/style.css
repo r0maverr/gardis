@@ -1,0 +1,435 @@
+.got-items{
+	position:relative;
+	min-height: 430px;
+}
+
+
+
+
+.bx-wrapper .bx-controls-direction a {
+  position: absolute;
+  top: 50%;
+  margin-top: -30px;
+  outline: 0;
+  width: 60px;
+  height: 59px;
+  text-indent: -9999px;
+  z-index: 1;
+}
+.bx-wrapper{
+	margin-bottom: 0 !important;
+}
+.block__title{
+	padding: 30px 0 !important;
+	margin: 0 !important;
+}
+
+/* ~~~ bx controls ~~~*/
+.got__controlArrow{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 400px;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.got__prev, 
+.got__next
+{
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+	pointer-events:all;
+}
+
+.got__prev{
+	
+	left:0;
+}
+
+.got__next{
+	right:0;
+	
+}
+
+.got__prev a{
+  display:block;
+  width:100%;
+  height:100%;
+  background: url('/img/prev.png') no-repeat 0 0;
+}
+.got__next a{
+  display:block;
+  width:100%;
+  height:100%;
+  background: url('/img/next.png') no-repeat 0 0;
+}
+.got__prev a:hover,
+.got__prev a:focus {
+  background-position: 0 0;
+}
+.got__next a:hover,
+.got__next a:focus {
+  background-position: 0 0;
+}
+
+
+.bx-controls.bx-has-pager{
+    position: absolute;
+	width: 100px;
+	height: 30px;
+    top: 410px;
+    left: 0;
+    right: 0;   
+    margin: auto;
+    z-index: 1;
+}
+
+
+.got-items .bx-wrapper .bx-pager.bx-default-pager a:hover, .got-items .bx-wrapper .bx-pager.bx-default-pager a.active,.got-items .bx-wrapper .bx-pager.bx-default-pager a:focus {
+	background:rgb(44,66,113);
+}
+.got-items .bx-wrapper .bx-pager.bx-default-pager a{
+	background:rgb(200,200,200);
+}
+/* ~~~ bx controls end ~~~*/
+
+.inner-content h2.got-h2{
+	text-transform: uppercase;
+    font-weight: bold;
+    color: black;
+    font-size: 25px;
+    line-height: 32px;
+    margin: 0;
+    padding: 0px 0 30px 65px;
+}
+
+.got-1440 {
+    background-color: transparent;
+    background: url(/img/turbaz-s.png) no-repeat 12px 0;
+}
+.got-1441 {
+    background-color: transparent;
+    background: url(/img/sklad-s.png) no-repeat 12px 0;
+}
+.got-1442 {
+    background-color: transparent;
+    background: url(/img/scool-s.png) no-repeat 12px 0;
+}
+.got-1443 {
+    background-color: transparent;
+    background: url(/img/dom-s.png) no-repeat 12px 0;
+}
+
+.got-item-content {
+	position:relative;
+	padding-top:50px;
+	padding-bottom:50px;
+}
+
+/*gotovie projects styles */
+.got-items .bx-wrapper .bx-controls-direction a {
+    top: 226px;
+}
+
+
+
+.got-item {
+	position:relative;
+	background:rgb(238,238,238);
+}
+
+
+.got-prop, .got-other-prop {
+	position:relative;
+	font-weight:bold;
+	border-bottom:1px dotted black;
+}
+.got-prop span{
+	 bottom: -5px;
+}
+.got-prop span:nth-child(1){
+	position:relative;
+	display:inline-block;
+	background:rgb(238,238,238);
+	padding-right:4px;
+}
+.got-prop span:nth-child(2){
+	padding-left:4px;
+	position:relative;
+	display:inline-block;
+	float:right;
+	background:rgb(238,238,238);
+}
+.got-other-prop span{
+	 bottom: -5px;
+}
+.got-other-prop span:nth-child(1){
+	position:relative;
+	display:inline-block;
+	background:white;
+	padding-right:4px;
+}
+.got-other-prop span:nth-child(2){
+	padding-left:4px;
+	position:relative;
+	display:inline-block;
+	float:right;
+	background:white;
+}
+
+.got-button:hover {
+	color:black;
+	text-decoration:none;
+}
+.got-button {
+	text-decoration:none;
+	position:relative;
+	display:block;
+	font-size:17px;
+	line-height:25px;
+	padding:15px;
+	text-align:center;
+	text-transform:uppercase;
+	background:rgb(255,204,0);
+	color:black;
+	border-radius:8px;
+}
+.got-others {
+	position:relative;
+	padding-top:30px;
+	padding-bottom:30px;
+	background:white;
+}
+.got-other h4 {
+	margin-top:0;
+	margin-bottom:0;
+	padding-top:20px;
+	padding-bottom:20px;
+}
+.got-other > a {
+	position:relative;
+	display:block;
+	/*box-shadow:0px 1px 3px rgba(100,100,100,.8);*/
+	background:rgb(232,232,232);
+	border:2px solid rgb(232,232,232);
+}
+.got-other h4 a{
+	position:relative;
+	display:block;
+	color:black;
+	text-decoration:none !important;
+}
+.got-other > a > img {
+	position:relative;
+	display:block;
+	overflow:hidden;
+	max-height:180px;
+	margin:0 auto;
+}
+.got-other {
+	position:relative;
+	margin-top:20px;
+	height:250px;
+}
+
+/* ~~~ bx style begin ~~~ */
+.bx-wrapper {
+	position: relative;
+	margin-bottom: 60px;
+	padding: 0;
+	*zoom: 1;
+	-ms-touch-action: pan-y;
+	touch-action: pan-y;
+	-moz-box-shadow: 0 0 5px #ccc;
+	-webkit-box-shadow: 0 0 5px #ccc;
+	box-shadow: 0 0 5px #ccc;
+	border: 5px solid #fff;
+	background: #fff;
+}
+.bx-wrapper img {
+	max-width: 100%;
+	display: block;
+}
+.bxslider {
+	margin: 0;
+	padding: 0;
+}
+ul.bxslider {
+	list-style: none;
+}
+.bx-viewport {
+	-webkit-transform: translatez(0);
+}
+/*
+.bx-wrapper .bx-pager,.bx-wrapper .bx-controls-auto {
+	position: absolute;
+	bottom: -30px;
+	width: 100%;
+}*/
+
+.bx-wrapper .bx-loading {
+	min-height: 50px;
+	background: url('/bitrix/templates/gardis_main/js/images/bx_loader.gif') center center no-repeat #ffffff;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2000;
+}
+/*
+.bx-wrapper .bx-pager {
+	text-align: center;
+	font-size: .85em;
+	font-family: Arial;
+	font-weight: bold;
+	color: #666;
+	padding-top: 20px;
+}*/
+/*
+.bx-wrapper .bx-pager.bx-default-pager a {
+	background: #666;
+	text-indent: -9999px;
+	display: block;
+	width: 10px;
+	height: 10px;
+	margin: 0 5px;
+	outline: 0;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+.bx-wrapper .bx-pager.bx-default-pager a:hover,.bx-wrapper .bx-pager.bx-default-pager a.active,.bx-wrapper .bx-pager.bx-default-pager a:focus {
+	background: #000;
+}
+.bx-wrapper .bx-pager-item,.bx-wrapper .bx-controls-auto .bx-controls-auto-item {
+	display: inline-block;
+	vertical-align: bottom;
+	*zoom: 1;
+	*display: inline;
+}
+.bx-wrapper .bx-pager-item {
+	font-size: 0;
+	line-height: 0;
+}
+
+.bx-wrapper .bx-prev {
+	left: 10px;
+	background: url('/bitrix/templates/gardis_main/js/images/controls.png') no-repeat 0 -32px;
+}
+.bx-wrapper .bx-prev:hover,.bx-wrapper .bx-prev:focus {
+	background-position: 0 0;
+}
+.bx-wrapper .bx-next {
+	right: 10px;
+	background: url('/bitrix/templates/gardis_main/js/images/controls.png') no-repeat -43px -32px;
+}
+.bx-wrapper .bx-next:hover,.bx-wrapper .bx-next:focus {
+	background-position: -43px 0;
+}
+.bx-wrapper .bx-controls-direction a {
+	position: absolute;
+	top: 50%;
+	margin-top: -16px;
+	outline: 0;
+	width: 32px;
+	height: 32px;
+	text-indent: -9999px;
+	z-index: 9999;
+}
+.bx-wrapper .bx-controls-direction a.disabled {
+	display: none;
+}
+
+.bx-wrapper .bx-controls-auto {
+	text-align: center;
+}
+.bx-wrapper .bx-controls-auto .bx-start {
+	display: block;
+	text-indent: -9999px;
+	width: 10px;
+	height: 11px;
+	outline: 0;
+	background: url('/bitrix/templates/gardis_main/js/images/controls.png') -86px -11px no-repeat;
+	margin: 0 3px;
+}
+.bx-wrapper .bx-controls-auto .bx-start:hover,.bx-wrapper .bx-controls-auto .bx-start.active,.bx-wrapper .bx-controls-auto .bx-start:focus {
+	background-position: -86px 0;
+}
+.bx-wrapper .bx-controls-auto .bx-stop {
+	display: block;
+	text-indent: -9999px;
+	width: 9px;
+	height: 11px;
+	outline: 0;
+	background: url('/bitrix/templates/gardis_main/js/images/controls.png') -86px -44px no-repeat;
+	margin: 0 3px;
+}
+.bx-wrapper .bx-controls-auto .bx-stop:hover,.bx-wrapper .bx-controls-auto .bx-stop.active,.bx-wrapper .bx-controls-auto .bx-stop:focus {
+	background-position: -86px -33px;
+}
+
+.bx-wrapper .bx-controls.bx-has-controls-auto.bx-has-pager .bx-pager {
+	text-align: left;
+	width: 80%;
+}
+.bx-wrapper .bx-controls.bx-has-controls-auto.bx-has-pager .bx-controls-auto {
+	right: 0;
+	width: 35px;
+}
+
+.bx-wrapper .bx-caption {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: #666;
+	background: rgba(80, 80, 80, 0.75);
+	width: 100%;
+}
+.bx-wrapper .bx-caption span {
+	color: #fff;
+	font-family: Arial;
+	display: block;
+	font-size: .85em;
+	padding: 10px;
+}
+*/
+/* ~~~ bx style end ~~~ */
+
+
+
+
+
+@media(max-width:768px) {
+	.got-items{min-height: 240px;}	
+	.got__controlArrow{ height: 200px; }	
+	.bx-controls.bx-has-pager{top: 210px;}
+}
+
+@media screen and (max-width:479px) {
+	.got-other {
+		height:auto;
+	}
+
+	.got-props {
+			position:relative;
+			padding-top:10px;
+			padding-bottom:20px;
+	}
+	
+	/*.inner-content h3{font-size:21px;}*/
+
+}
+
+
+
+/*
+.img-content {
+    display: none;
+}*/

@@ -1,0 +1,279 @@
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:54
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÏÐßÌÎÃÎ ÊÊÏ.60.60.20.RAL (12)
+ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÏÐßÌÎÃÎ ÊÊÏ.60.60.20.RAL (12)
+12 ØÒ. ÊÎÌÏËÅÊÒÎÂ ÕÎÌÓÒÎÂ ÈÇ ÎÖÈÍÊÎÂÀÍÍÎÉ ÑÒÀËÈ ÒÎËÙÈÍÎÉ 2ÌÌ ÄËß  ÑÒÎËÁÀ ÑÅ×ÅÍÈÅÌ 60Õ60, Ñ ÊÎÌÏËÅÊÒÀÌÈ ÌÅÒÈÇÎÂ
+
+    [ID] => 12011
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:54
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÏÐßÌÎÃÎ ÊÊÏ.60.40.20.RAL (12)
+ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÏÐßÌÎÃÎ ÊÊÏ.60.40.20.RAL (12)
+12 ØÒ. ÊÎÌÏËÅÊÒÎÂ ÕÎÌÓÒÎÂ ÈÇ ÎÖÈÍÊÎÂÀÍÍÎÉ ÑÒÀËÈ ÒÎËÙÈÍÎÉ 2ÌÌ ÄËß  ÑÒÎËÁÀ ÑÅ×ÅÍÈÅÌ 60Õ40, Ñ ÊÎÌÏËÅÊÒÀÌÈ ÌÅÒÈÇÎÂ
+
+    [ID] => 12012
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:54
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÏÐßÌÎÃÎ ÊÊÏ.80.80.20.RAL (12)
+ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÏÐßÌÎÃÎ ÊÊÏ.80.80.20.RAL (12)
+12 ØÒ. ÊÎÌÏËÅÊÒÎÂ ÕÎÌÓÒÎÂ ÈÇ ÎÖÈÍÊÎÂÀÍÍÎÉ ÑÒÀËÈ ÒÎËÙÈÍÎÉ 2ÌÌ ÄËß  ÑÒÎËÁÀ ÑÅ×ÅÍÈÅÌ 80Õ80, Ñ ÊÎÌÏËÅÊÒÀÌÈ ÌÅÒÈÇÎÂ
+
+    [ID] => 12013
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:54
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÊÎÍÖÅÂÎÃÎ ÊÊÊ.60.40.20.RAL (8)
+ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÊÎÍÖÅÂÎÃÎ ÊÊÊ.60.40.20.RAL (8)
+8 ØÒ. ÊÎÌÏËÅÊÒÎÂ ÕÎÌÓÒÎÂ ÈÇ ÎÖÈÍÊÎÂÀÍÍÎÉ ÑÒÀËÈ ÒÎËÙÈÍÎÉ 2ÌÌ ÄËß  ÑÒÎËÁÀ ÑÅ×ÅÍÈÅÌ 60Õ40, ÄËß ÊÐÅÏËÅÍÈß ÏÀÍÅËÈ Ê ÊÐÀÉÍÈÌ ÑÒÎËÁÀÌ, Ñ ÊÎÌÏËÅÊÒÀÌÈ ÌÅÒÈÇÎÂ
+
+    [ID] => 12014
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:54
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÊÎÍÖÅÂÎÃÎ ÊÊÊ.60.60.20.RAL (8)
+ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÊÎÍÖÅÂÎÃÎ ÊÊÊ.60.60.20.RAL (8)
+8 ØÒ. ÊÎÌÏËÅÊÒÎÂ ÕÎÌÓÒÎÂ ÈÇ ÎÖÈÍÊÎÂÀÍÍÎÉ ÑÒÀËÈ ÒÎËÙÈÍÎÉ 2ÌÌ ÄËß  ÑÒÎËÁÀ ÑÅ×ÅÍÈÅÌ 60Õ60, ÄËß ÊÐÅÏËÅÍÈß ÏÀÍÅËÈ Ê ÓÃËÎÂÛÌ È ÊÐÀÉÍÈÌ ÑÒÎËÁÀÌ, Ñ ÊÎÌÏËÅÊÒÀÌÈ ÌÅÒÈÇÎÂ
+
+    [ID] => 12015
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:54
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÊÎÍÖÅÂÎÃÎ ÊÊÊ.80.80.20.RAL (4)
+ÍÀÁÎÐ ÊÎÌÏËÅÊÒÎÂ ÊÐÅÏÅÆÀ ÊÎÍÖÅÂÎÃÎ ÊÊÊ.80.80.20.RAL (4)
+4 ØÒ. ÊÎÌÏËÅÊÒÎÂ ÕÎÌÓÒÎÂ ÈÇ ÎÖÈÍÊÎÂÀÍÍÎÉ ÑÒÀËÈ ÒÎËÙÈÍÎÉ 2ÌÌ ÄËß  ÑÒÎËÁÀ ÑÅ×ÅÍÈÅÌ 80Õ80, ÄËß ÊÐÅÏËÅÍÈß ÏÀÍÅËÈ Ê ÓÃËÎÂÛÌ È ÊÐÀÉÍÈÌ ÑÒÎËÁÀÌ, Ñ ÊÎÌÏËÅÊÒÀÌÈ ÌÅÒÈÇÎÂ
+
+    [ID] => 12016
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1530.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1530.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5ÌÌ ÐÀÇÌÅÐ ÏÀÍÅËÈ 2500Õ1530ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 3 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12133
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1730.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1730.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5ÌÌ ÐÀÇÌÅÐ ÏÀÍÅËÈ 2500Õ1730ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 3 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12134
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1930.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1930.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5ÌÌ ÐÀÇÌÅÐ ÏÀÍÅËÈ 2500Õ1930ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 3 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12135
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.3000.1530.200.55.3,5.4.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.3000.1530.200.55.3,5.4.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5 ÌÌ-ÂÅÐÒÈÊÀËÜÍÛÅ,   4 ÌÌ - ÃÎÐÈÇÎÍÒÀËÜÍÛÅ. ÐÀÇÌÅÐ ÏÀÍÅËÈ 3000Õ1530ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 3 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12136
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.3000.1730.200.55.3,5.4.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.3000.1730.200.55.3,5.4.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5 ÌÌ-ÂÅÐÒÈÊÀËÜÍÛÅ,   4 ÌÌ - ÃÎÐÈÇÎÍÒÀËÜÍÛÅ. ÐÀÇÌÅÐ ÏÀÍÅËÈ 3000Õ1730ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 3 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12137
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.3000.1930.200.55.3,5.4.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.3000.1930.200.55.3,5.4.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5 ÌÌ-ÂÅÐÒÈÊÀËÜÍÛÅ,   4 ÌÌ - ÃÎÐÈÇÎÍÒÀËÜÍÛÅ. ÐÀÇÌÅÐ ÏÀÍÅËÈ 3000Õ1930ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 3 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12138
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------
+Host: gardis-fence.ru
+Date: 2016-11-14 05:25:55
+Module: ------------UPDATE-----------
+Array
+(
+    [ACTIVE] => N
+    [WF] => N
+    [SEARCHABLE_CONTENT] => ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1230.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß Ï-F3D.2500.1230.200.55.3,5.3,5.RAL
+ÏÀÍÅËÜ ÎÃÐÀÆÄÅÍÈß ÈÇÃÎÒÎÂËÅÍÀ ÈÇ ÑÒÀËÜÍÎÃÎ ÃÎÐß×ÅÎÖÈÍÊÎÂÀÍÍÎÃÎ ÏÐÓÒÊÀ ÄÈÀÌÅÒÐÎÌ 3,5ÌÌ ÐÀÇÌÅÐ ÏÀÍÅËÈ 2500Õ1230ÌÌ, ÐÀÇÌÅÐ ß×ÅÉÊÈ 55Õ200ÌÌ, 2 ÐÅÁÐÀ ÆÅÑÒÊÎÑÒÈ
+    [ID] => 12139
+    [IBLOCK_ID] => 45
+    [RESULT] => 1
+)
+
+    WriteElementUpdateDebug < call_user_func_array < ExecuteModuleEventEx < CIBlockElement::Update < CIBlockCMLImport::DeactivateElement
+	/home/u73070/gardies.ru/www/bitrix/modules/main/classes/general/module.php:475
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/mysql/iblockelement.php:1619
+	/home/u73070/gardies.ru/www/bitrix/modules/iblock/classes/general/cml2.php:4569
+	/home/u73070/gardies.ru/www/bitrix/components/bitrix/catalog.import.1c/component.php:560
+----------

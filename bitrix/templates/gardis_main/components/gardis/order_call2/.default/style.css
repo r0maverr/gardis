@@ -1,0 +1,28 @@
+#phone_take .mf-ok-text {color:green;}
+#phone_take .errors{margin-bottom:30px;}
+/*
+a.order_call_button {
+    display: block;
+    background: #A24D8E; /* Old browsers */
+    background: -moz-linear-gradient(top,  #A24D8E 0%, #792C68 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#A24D8E), color-stop(100%,#792C68)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #A24D8E 0%,#792C68 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #A24D8E 0%,#792C68 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #A24D8E 0%,#792C68 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #A24D8E 0%,#792C68 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#A24D8E', endColorstr='#792C68',GradientType=0 ); /* IE6-9 */
+    width: 205px !important;
+    height: 22px !important;
+    text-align: center;
+    color: #fff !important;
+    font-size: 12px !important;
+    padding: 11px 0 0 0 !important;
+    text-transform: uppercase;
+    border-radius: 5px;
+    border: 1px solid #782C67 !important;
+    text-decoration: none !important;
+} 
+
+a.order_call_button:hover {
+	color: rgba(255,255,255,0.7) !important;
+} */

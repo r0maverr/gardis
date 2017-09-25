@@ -1,0 +1,12 @@
+.contacts-map{
+	position:relative;	
+}
+
+.contact-map__layout{	
+    position: absolute;
+    top: -45px;
+    left: 0;
+    width: 100%;
+    height: 487px;
+	cursor:pointer;
+}

@@ -1,0 +1,15 @@
+﻿.navbar-brand.menu-header{
+    display:none;
+}
+.left-menu .menu-header{
+        display:none;
+}
+@media(max-width:767px) {
+    .left-menu .menu-header {
+        display:initial;
+    }
+}
+
+.navbar-toggle.btn.btn-navbar {
+    width:43px !important;
+}
